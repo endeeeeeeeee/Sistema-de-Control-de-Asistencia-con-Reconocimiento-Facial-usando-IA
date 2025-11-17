@@ -1,0 +1,49 @@
+{
+    "app": {
+        "name": "CLASS VISION",
+        "version": "2.0.0",
+        "description": "Sistema de Control de Asistencia con Reconocimiento Facial",
+        "authors": ["Itzan Valdivia", "Ender Rosales"]
+    },
+    "paths": {
+        "haarcascade": "haarcascade_frontalface_default.xml",
+        "training_images": "TrainingImage",
+        "training_label": "TrainingImageLabel/Trainner.yml",
+        "student_details": "StudentDetails/studentdetails.csv",
+        "attendance": "Attendance",
+        "ui_images": "UI_Image",
+        "logs": "logs"
+    },
+    "camera": {
+        "default_index": 0,
+        "capture_duration_seconds": 20,
+        "images_per_student": 50,
+        "fps": 30
+    },
+    "recognition": {
+        "confidence_threshold": 70,
+        "scale_factor": 1.2,
+        "min_neighbors": 5,
+        "algorithm": "LBPH"
+    },
+    "ui": {
+        "theme": "greek",
+        "window_size": "1280x720",
+        "start_maximized": true,
+        "language": "es"
+    },
+    "tts": {
+        "enabled": true,
+        "language": "spanish",
+        "rate": 150,
+        "volume": 0.9
+    },
+    "logging": {
+        "enabled": true,
+        "level": "INFO",
+        "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+        "file_rotation": true,
+        "max_bytes": 10485760,
+        "backup_count": 5
+    }
+}
