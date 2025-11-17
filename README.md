@@ -6,12 +6,15 @@
 
 **Sistema Profesional de Control de Asistencia con Reconocimiento Facial usando IA**
 
-[![Version](https://img.shields.io/badge/version-2.0.0-blue.svg)](https://github.com/endeeeeeeeee/Sistema-de-Control-de-Asistencia-con-Reconocimiento-Facial-usando-IA)
+**Universidad Nur**
+
+[![Version](https://img.shields.io/badge/version-2.1.0-blue.svg)](https://github.com/endeeeeeeeee/Sistema-de-Control-de-Asistencia-con-Reconocimiento-Facial-usando-IA)
 [![Python](https://img.shields.io/badge/python-3.8+-green.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![Mobile](https://img.shields.io/badge/mobile-enabled-brightgreen.svg)]()
 
-[🇪🇸 Español](README_ESPAÑOL.md) | [🇬🇧 English](#english)
+[🇪🇸 Español](README_ESPAÑOL.md) | [🇬🇧 English](#english) | [📱 Mobile Guide](MOBILE_GUIDE.md)
 
 </div>
 
@@ -85,6 +88,14 @@
 - ✅ Scripts de instalación automatizada
 - ✅ Arquitectura orientada a objetos
 - ✅ Documentación completa
+
+### 📱 NUEVO en v2.1.0 - Control Móvil
+- ✨ **Control remoto desde smartphone**: Toma asistencia desde tu teléfono
+- 🌐 **Servidor web integrado**: Flask API REST completa
+- 📱 **Interfaz responsive**: Diseño optimizado para móviles
+- 🔄 **Tiempo real**: Visualiza reconocimientos al instante
+- 📊 **QR Code**: Acceso rápido escaneando código QR
+- 🎓 **Branding Universidad Nur**: Personalización institucional
 
 ---
 
@@ -177,6 +188,34 @@ python attendance.py
 3. Click en **"Invocar el Rostro"**
 4. Posicionar rostro frente a cámara
 5. Sistema captura 50 fotos automáticamente
+
+### 3️⃣ Entrenar el Modelo
+
+1. Después de registrar estudiantes
+2. Sistema entrena automáticamente
+3. Genera modelo `Trainner.yml`
+
+### 4️⃣ Tomar Asistencia
+
+**Opción A - Desde PC:**
+1. Click en **"Convocar el Verbo de los Héroes"**
+2. Ingresar nombre de la materia
+3. Sistema reconoce rostros automáticamente
+4. Asistencia guardada en CSV
+
+**Opción B - Desde Smartphone (NUEVO v2.1.0):**
+1. Ejecutar: `start_mobile.bat` (Windows) o `python start_mobile_server.py`
+2. Escanear QR code con tu teléfono
+3. Seleccionar materia en interfaz móvil
+4. Presionar "▶️ Iniciar Asistencia"
+5. Ver reconocimientos en tiempo real
+
+📱 **[Ver Guía Completa de Control Móvil](MOBILE_GUIDE.md)**
+
+### 5️⃣ Ver Registros
+
+1. Click en **"Consultar las Tablas del Destino"**
+2. Ver historial completo de asistencias
 6. Click en **"Grabar el Conocimiento"** para entrenar
 
 ### 3️⃣ Tomar Asistencia

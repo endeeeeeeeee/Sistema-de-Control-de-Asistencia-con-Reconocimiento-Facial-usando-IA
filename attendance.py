@@ -71,7 +71,7 @@ class ClassVisionApp:
         self.verify_photo = ImageTk.PhotoImage(vi)
 
     def setup_window(self):
-        self.window.title("CLASS VISION - Sistema de Asistencia")
+        self.window.title("CLASS VISION - Universidad Nur")
         self.window.geometry("1280x720")
         self.window.state('zoomed')
         self.window.configure(background=THEME['BG'])
@@ -181,7 +181,7 @@ class ClassVisionApp:
         # Subtítulo elegante
         subtitle = tk.Label(
             main_frame,
-            text="El vasto Olimpo de CLASS VISION le da la bienvenida",
+            text="Universidad Nur - Sistema de Control de Asistencia",
             bg=THEME['CONTAINER'],
             fg=THEME['DARK'],
             bd=5,

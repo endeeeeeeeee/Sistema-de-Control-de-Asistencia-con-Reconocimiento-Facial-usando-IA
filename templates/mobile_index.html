@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLASS VISION - Universidad Nur</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            color: #667eea;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            margin-bottom: 15px;
+            background: white;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status.inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+
+        .recognized-list {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 10px;
+        }
+
+        .recognized-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">🎓</div>
+            <h1>CLASS VISION</h1>
+            <div class="subtitle">Universidad Nur</div>
+            <div class="subtitle">Control de Asistencia Móvil</div>
+        </div>
+
+        <!-- Estado del Sistema -->
+        <div class="card">
+            <h2>📊 Estado del Sistema</h2>
+            <div id="systemStatus" class="status inactive">
+                Sistema Inactivo
+            </div>
+            <div class="stats">
+                <div class="stat-box">
+                    <div class="stat-number" id="totalStudents">0</div>
+                    <div class="stat-label">Estudiantes</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-number" id="recognizedCount">0</div>
+                    <div class="stat-label">Reconocidos</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Control de Asistencia -->
+        <div class="card">
+            <h2>📸 Control de Asistencia</h2>
+            <select id="subjectSelect">
+                <option value="">Seleccionar materia...</option>
+            </select>
+            <button class="btn btn-primary" id="startBtn" onclick="startAttendance()">
+                ▶️ Iniciar Asistencia
+            </button>
+            <button class="btn btn-danger" id="stopBtn" onclick="stopAttendance()" style="display: none;">
+                ⏹️ Detener Asistencia
+            </button>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Procesando...</p>
+            </div>
+        </div>
+
+        <!-- Estudiantes Reconocidos -->
+        <div class="card" id="recognizedCard" style="display: none;">
+            <h2>✅ Estudiantes Reconocidos</h2>
+            <div class="recognized-list" id="recognizedList"></div>
+        </div>
+
+        <!-- Acciones Rápidas -->
+        <div class="card">
+            <h2>⚡ Acciones Rápidas</h2>
+            <button class="btn btn-secondary" onclick="viewHistory()">
+                📋 Ver Historial
+            </button>
+            <button class="btn btn-secondary" onclick="refreshData()">
+                🔄 Actualizar Datos
+            </button>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Sistema CLASS VISION v2.1.0</p>
+            <p>Universidad Nur © 2025</p>
+        </div>
+    </div>
+
+    <script>
+        let updateInterval = null;
+
+        // Cargar materias al inicio
+        async function loadSubjects() {
+            try {
+                const response = await fetch('/api/subjects');
+                const data = await response.json();
+                const select = document.getElementById('subjectSelect');
+                select.innerHTML = '<option value="">Seleccionar materia...</option>';
+                data.subjects.forEach(subject => {
+                    const option = document.createElement('option');
+                    option.value = subject;
+                    option.textContent = subject;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error cargando materias:', error);
+            }
+        }
+
+        // Cargar estudiantes
+        async function loadStudents() {
+            try {
+                const response = await fetch('/api/students');
+                const data = await response.json();
+                document.getElementById('totalStudents').textContent = data.total;
+            } catch (error) {
+                console.error('Error cargando estudiantes:', error);
+            }
+        }
+
+        // Iniciar asistencia
+        async function startAttendance() {
+            const subject = document.getElementById('subjectSelect').value;
+            if (!subject) {
+                alert('Por favor selecciona una materia');
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            
+            try {
+                const response = await fetch('/api/start-attendance', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({subject: subject})
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('startBtn').style.display = 'none';
+                    document.getElementById('stopBtn').style.display = 'block';
+                    document.getElementById('recognizedCard').style.display = 'block';
+                    
+                    // Iniciar actualización automática
+                    updateInterval = setInterval(updateStatus, 2000);
+                    updateStatus();
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            } catch (error) {
+                alert('Error al iniciar: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        // Detener asistencia
+        async function stopAttendance() {
+            try {
+                const response = await fetch('/api/stop-attendance', {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('startBtn').style.display = 'block';
+                    document.getElementById('stopBtn').style.display = 'none';
+                    
+                    // Detener actualización automática
+                    if (updateInterval) {
+                        clearInterval(updateInterval);
+                        updateInterval = null;
+                    }
+                    
+                    updateStatus();
+                    alert(`Asistencia finalizada. ${data.recognized.length} estudiantes reconocidos.`);
+                }
+            } catch (error) {
+                alert('Error al detener: ' + error.message);
+            }
+        }
+
+        // Actualizar estado
+        async function updateStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                const statusDiv = document.getElementById('systemStatus');
+                if (data.camera_active) {
+                    statusDiv.className = 'status active';
+                    statusDiv.textContent = `📸 Tomando asistencia: ${data.current_subject}`;
+                } else {
+                    statusDiv.className = 'status inactive';
+                    statusDiv.textContent = 'Sistema Inactivo';
+                }
+                
+                document.getElementById('recognizedCount').textContent = data.recognized_count;
+                
+                // Actualizar lista de reconocidos
+                const list = document.getElementById('recognizedList');
+                list.innerHTML = '';
+                data.recognized_students.forEach(student => {
+                    const item = document.createElement('div');
+                    item.className = 'recognized-item';
+                    item.innerHTML = `
+                        <span>${student}</span>
+                        <span>✅</span>
+                    `;
+                    list.appendChild(item);
+                });
+            } catch (error) {
+                console.error('Error actualizando estado:', error);
+            }
+        }
+
+        // Ver historial
+        function viewHistory() {
+            const subject = document.getElementById('subjectSelect').value;
+            if (!subject) {
+                alert('Por favor selecciona una materia');
+                return;
+            }
+            window.location.href = `/api/attendance-history/${subject}`;
+        }
+
+        // Refrescar datos
+        function refreshData() {
+            loadSubjects();
+            loadStudents();
+            updateStatus();
+            alert('Datos actualizados');
+        }
+
+        // Inicializar al cargar
+        window.onload = function() {
+            loadSubjects();
+            loadStudents();
+            updateStatus();
+            
+            // Actualizar estado cada 5 segundos cuando no está activo
+            setInterval(() => {
+                if (!updateInterval) {
+                    updateStatus();
+                }
+            }, 5000);
+        };
+    </script>
+</body>
+</html>
