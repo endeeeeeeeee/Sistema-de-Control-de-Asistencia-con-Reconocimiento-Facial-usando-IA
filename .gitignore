@@ -1,7 +1,29 @@
-TrainingImage/
-TrainingImageLabel/
+# ============================================
+# CLASS VISION - Sistema de Asistencia
+# ============================================
+
+# ===== Datos de Entrenamiento (Específico del Proyecto) =====
+# Imágenes de entrenamiento (muy pesadas, se regeneran localmente)
+TrainingImage/*/
+!TrainingImage/.gitkeep
+
+# Modelo entrenado (se regenera localmente)
+TrainingImageLabel/*.yml
+!TrainingImageLabel/.gitkeep
+
+# ===== Datos Sensibles (IMPORTANTE) =====
+# Detalles de estudiantes (información personal)
+StudentDetails/*.csv
+!StudentDetails/.gitkeep
+!StudentDetails/studentdetails_example.csv
+
+# Registros de asistencia (información sensible)
+Attendance/*/
+!Attendance/.gitkeep
+
+# ===== Python =====
 # Byte-compiled / optimized / DLL files
-__pycache__/*
+__pycache__/
 *.py[cod]
 *$py.class
 
@@ -153,6 +175,56 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# ===== IDEs y Editores =====
+# PyCharm / IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+
+# VS Code
+.vscode/
+*.code-workspace
+
+# ===== Sistema Operativo =====
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+*.stackdump
+bash.exe.stackdump
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# ===== Logs y Temporales =====
+# Archivos de log del sistema
+logs/
+*.log
+
+# Archivos temporales
+tmp/
+temp/
+*.tmp
+*.bak
+*.backup
+
+# ===== Configuración Local =====
+# Configuración local específica del usuario
+config/local_config.json
+config/*.local.*
+.env.local
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can
