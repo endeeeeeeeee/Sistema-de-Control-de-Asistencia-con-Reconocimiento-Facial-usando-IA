@@ -1,0 +1,23 @@
+{
+  "reconocimiento_facial": {
+    "umbral_minimo": 30,
+    "umbral_maximo": 50,
+    "descripcion": "Rango de confianza permitido: solo acepta valores entre 30-50 (reconocimientos excelentes). Valores menores indican mejor reconocimiento.",
+    "recomendaciones": {
+      "ultra_estricto": "30-40 (solo matches casi perfectos)",
+      "muy_estricto": "30-50 (solo excelentes) ← ACTUAL",
+      "estricto": "30-60 (buenos y excelentes)",
+      "normal": "30-70 (aceptable en adelante)",
+      "permisivo": "30-85 (más tolerante)"
+    },
+    "explicacion": {
+      "valores_0_30": "Match perfecto a excelente - Se rechaza por ser demasiado perfecto (posible foto)",
+      "valores_30_50": "Reconocimiento excelente - ACEPTADO",
+      "valores_50_mas": "Confianza insuficiente - RECHAZADO"
+    }
+  },
+  "sistema": {
+    "version": "1.0.0",
+    "nombre": "CLASS VISION"
+  }
+}

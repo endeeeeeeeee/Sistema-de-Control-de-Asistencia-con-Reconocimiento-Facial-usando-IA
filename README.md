@@ -13,8 +13,9 @@
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
 [![Mobile](https://img.shields.io/badge/mobile-enabled-brightgreen.svg)]()
+[![Auth](https://img.shields.io/badge/auth-secure-red.svg)]()
 
-[🇪🇸 Español](README_ESPAÑOL.md) | [🇬🇧 English](#english) | [📱 Mobile Guide](MOBILE_GUIDE.md)
+[🇪🇸 Español](README_ESPAÑOL.md) | [🇬🇧 English](#english) | [📱 Mobile Guide](MOBILE_GUIDE.md) | [👨‍🏫 Teacher Guide](GUIA_DOCENTES.md)
 
 </div>
 
@@ -97,6 +98,14 @@
 - 📊 **QR Code**: Acceso rápido escaneando código QR
 - 🎓 **Branding Universidad Nur**: Personalización institucional
 
+### 🔐 NUEVO en v2.1.1 - Sistema de Autenticación
+- 👨‍🏫 **Login de docentes**: Sistema seguro de autenticación
+- 🎯 **Dashboard personalizado**: Panel de control para cada docente
+- 📚 **Gestión de materias**: Organiza tus clases fácilmente
+- 👥 **Gestión de estudiantes**: Agrega estudiantes por materia
+- 🔒 **Sesiones seguras**: Tokens con 8 horas de duración
+- 🗂️ **Datos aislados**: Cada docente ve solo sus estudiantes
+
 ---
 
 ## 💻 Requisitos
@@ -167,6 +176,32 @@ pip install -r requirements.txt
 ---
 
 ## 📖 Uso
+
+### Opción A: Sistema con Autenticación (Recomendado para Docentes)
+
+#### 1️⃣ Iniciar el Servidor Web
+```bash
+python mobile_server.py
+```
+
+#### 2️⃣ Acceder al Sistema
+- **Desde PC**: http://localhost:5000/login
+- **Desde teléfono**: http://[IP-MOSTRADA]:5000/login
+
+#### 3️⃣ Registrarse o Ingresar
+- Primera vez: Crea tu cuenta de docente
+- Siguientes veces: Ingresa con tu usuario y contraseña
+
+#### 4️⃣ Gestionar tus Clases
+- Agrega materias desde el dashboard
+- Registra estudiantes en cada materia
+- Toma asistencia desde PC o móvil
+
+📖 **Guía completa**: Ver [GUIA_DOCENTES.md](GUIA_DOCENTES.md)
+
+---
+
+### Opción B: Sistema Tradicional (Sin Login)
 
 ### 1️⃣ Iniciar la Aplicación
 
