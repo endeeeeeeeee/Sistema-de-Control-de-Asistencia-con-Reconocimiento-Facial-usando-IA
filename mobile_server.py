@@ -963,13 +963,33 @@ def get_dashboard_stats():
         return jsonify({'success': False, 'error': str(e)}), 500
 
 
-def start_server(port=5001, debug=False):
-    """Inicia el servidor web"""
+def start_server(port=None, debug=None):
+    """
+    Inicia el servidor web
+    
+    Args:
+        port: Puerto del servidor (si None, usa SERVER_PORT de .env)
+        debug: Modo debug (si None, usa FLASK_DEBUG de .env)
+    """
+    # Obtener configuración de variables de entorno
+    if port is None:
+        port = int(os.getenv('SERVER_PORT', '5001'))
+    if debug is None:
+        debug = os.getenv('FLASK_DEBUG', 'False').lower() == 'true'
+    
     ip = get_local_ip()
     print(f"\n{'='*60}")
     print(f"UNIVERSIDAD NUR - CLASS VISION")
     print(f"Servidor Movil Iniciado")
     print(f"{'='*60}")
+    
+    # Advertencia si debug está activado
+    if debug:
+        print("⚠️  ADVERTENCIA: MODO DEBUG ACTIVADO")
+        print("   Esto NO debe usarse en producción")
+    else:
+        print("✅ MODO PRODUCCIÓN (debug desactivado)")
+    
     print(f"\nAccede desde tu smartphone:")
     print(f"   http://{ip}:{port}")
     print(f"\nEscanea el codigo QR:")

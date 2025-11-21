@@ -1,10 +1,6 @@
-# 🏛️ CLASS VISION - Sistema de Control de Asistencia
+# CLASS VISION - Sistema de Control de Asistencia
 
-<div align="center">
-
-![CLASS VISION Logo](UI_Image/0001.png)
-
-**Sistema Profesional de Control de Asistencia con Reconocimiento Facial usando IA**
+Sistema Profesional de Control de Asistencia con Reconocimiento Facial usando Inteligencia Artificial
 
 **Universidad Nur**
 
@@ -12,118 +8,123 @@
 [![Python](https://img.shields.io/badge/python-3.8+-green.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-MIT-orange.svg)](LICENSE)
 [![Status](https://img.shields.io/badge/status-active-success.svg)]()
-[![Mobile](https://img.shields.io/badge/mobile-enabled-brightgreen.svg)]()
-[![Auth](https://img.shields.io/badge/auth-secure-red.svg)]()
 
-[🇪🇸 Español](README_ESPAÑOL.md) | [🇬🇧 English](#english) | [📱 Mobile Guide](MOBILE_GUIDE.md) | [👨‍🏫 Teacher Guide](GUIA_DOCENTES.md)
-
-</div>
+[Español](README_ESPAÑOL.md) | [English](#english) | [Mobile Guide](MOBILE_GUIDE.md) | [Teacher Guide](GUIA_DOCENTES.md)
 
 ---
 
-## 📋 Tabla de Contenidos
+## Tabla de Contenidos
 
-- [Descripción](#-descripción)
-- [Características](#-características)
-- [Requisitos](#-requisitos)
-- [Instalación](#-instalación)
-- [Uso](#-uso)
-- [Estructura del Proyecto](#-estructura-del-proyecto)
-- [Configuración](#️-configuración)
-- [Contribuir](#-contribuir)
-- [Licencia](#-licencia)
-- [Autores](#-autores)
-
----
-
-## 🎯 Descripción
-
-**CLASS VISION** es un sistema avanzado de control de asistencia que utiliza **reconocimiento facial con Inteligencia Artificial** para automatizar el registro de asistencia en instituciones educativas. El sistema elimina métodos tradicionales lentos y propensos a errores, proporcionando una solución moderna, eficiente y confiable.
-
-### ¿Por qué CLASS VISION?
-
-- ⚡ **Rápido**: Registro de asistencia en 30 segundos vs 10 minutos manual
-- 🎯 **Preciso**: Reconocimiento facial con 90-95% de precisión
-- 🔒 **Seguro**: Datos biométricos, imposible de falsificar
-- 📊 **Analítico**: Reportes automáticos y estadísticas
-- 🎨 **Elegante**: Interfaz profesional con tema griego
+- [Descripción](#descripción)
+- [Características](#características)
+- [Requisitos](#requisitos)
+- [Instalación](#instalación)
+- [Uso](#uso)
+- [Estructura del Proyecto](#estructura-del-proyecto)
+- [Configuración](#configuración)
+- [Contribuir](#contribuir)
+- [Licencia](#licencia)
+- [Autores](#autores)
 
 ---
 
-## ✨ Características
+## Descripción
 
-### 🧠 Inteligencia Artificial
+CLASS VISION es un sistema avanzado de control de asistencia que utiliza reconocimiento facial con Inteligencia Artificial para automatizar el registro de asistencia en instituciones educativas. El sistema elimina métodos tradicionales lentos y propensos a errores, proporcionando una solución moderna, eficiente y confiable.
+
+### Ventajas del Sistema
+
+- **Rápido**: Registro de asistencia en 30 segundos vs 10 minutos manual
+- **Preciso**: Reconocimiento facial con 90-95% de precisión
+- **Seguro**: Datos biométricos, imposible de falsificar
+- **Analítico**: Reportes automáticos y estadísticas
+- **Profesional**: Interfaz moderna y fácil de usar
+
+---
+
+## Características
+
+### Inteligencia Artificial
+
 - **Algoritmo LBPH**: Local Binary Patterns Histograms para reconocimiento facial
 - **Detector Haar Cascade**: Detección de rostros en tiempo real
 - **Entrenamiento Automático**: Modelo que aprende de nuevos estudiantes
 - **Confianza Ajustable**: Umbral personalizable para mayor precisión
 
-### 👥 Gestión de Estudiantes
-- ✅ Registro con captura de 50 fotos por estudiante
-- ✅ Base de datos CSV fácil de gestionar
-- ✅ Identificación automática en tiempo real
-- ✅ Histórico completo de registros
+### Gestión de Estudiantes
 
-### 📸 Captura y Procesamiento
-- ✅ Soporte para webcams USB y integradas
-- ✅ Detección múltiple de rostros simultáneos
-- ✅ Procesamiento en tiempo real (30 FPS)
-- ✅ Eliminación automática de duplicados
+- Registro con captura de 50 fotos por estudiante
+- Base de datos PostgreSQL para gestión eficiente
+- Identificación automática en tiempo real
+- Histórico completo de registros
 
-### 📊 Reportes y Análisis
-- ✅ Exportación a CSV con timestamps
-- ✅ Cálculo automático de porcentajes
-- ✅ Visualización en tablas elegantes
-- ✅ Histórico consolidado por materia
+### Captura y Procesamiento
 
-### 🎨 Interfaz Profesional
-- ✅ Tema griego elegante y único
-- ✅ Efectos visuales interactivos
-- ✅ Síntesis de voz en español
-- ✅ Diseño responsivo y moderno
+- Soporte para webcams USB y integradas
+- Detección múltiple de rostros simultáneos
+- Procesamiento en tiempo real (30 FPS)
+- Eliminación automática de duplicados
 
-### 🔧 Características Profesionales (v2.0.0)
-- ✅ Sistema de configuración JSON
-- ✅ Logging profesional con rotación
-- ✅ Manejo robusto de excepciones
-- ✅ Scripts de instalación automatizada
-- ✅ Arquitectura orientada a objetos
-- ✅ Documentación completa
+### Reportes y Análisis
 
-### 📱 NUEVO en v2.1.0 - Control Móvil
-- ✨ **Control remoto desde smartphone**: Toma asistencia desde tu teléfono
-- 🌐 **Servidor web integrado**: Flask API REST completa
-- 📱 **Interfaz responsive**: Diseño optimizado para móviles
-- 🔄 **Tiempo real**: Visualiza reconocimientos al instante
-- 📊 **QR Code**: Acceso rápido escaneando código QR
-- 🎓 **Branding Universidad Nur**: Personalización institucional
+- Exportación a CSV con timestamps
+- Cálculo automático de porcentajes
+- Visualización en tablas profesionales
+- Histórico consolidado por materia
 
-### 🔐 NUEVO en v2.1.1 - Sistema de Autenticación
-- 👨‍🏫 **Login de docentes**: Sistema seguro de autenticación
-- 🎯 **Dashboard personalizado**: Panel de control para cada docente
-- 📚 **Gestión de materias**: Organiza tus clases fácilmente
-- 👥 **Gestión de estudiantes**: Agrega estudiantes por materia
-- 🔒 **Sesiones seguras**: Tokens con 8 horas de duración
-- 🗂️ **Datos aislados**: Cada docente ve solo sus estudiantes
+### Interfaz Web
+
+- Diseño responsivo y moderno
+- Interfaz intuitiva para docentes
+- Acceso desde PC y dispositivos móviles
+- Dashboard personalizado por docente
+
+### Características Profesionales (v2.0.0+)
+
+- Sistema de configuración JSON
+- Logging profesional con rotación
+- Manejo robusto de excepciones
+- Scripts de instalación automatizada
+- Arquitectura orientada a objetos
+- Documentación completa
+
+### Control Móvil (v2.1.0)
+
+- Control remoto desde smartphone
+- Servidor web integrado con Flask API REST
+- Interfaz responsive optimizada para móviles
+- Visualización en tiempo real de reconocimientos
+- Acceso rápido mediante código QR
+
+### Sistema de Autenticación (v2.1.1)
+
+- Login seguro de docentes
+- Dashboard personalizado por usuario
+- Gestión de materias y estudiantes
+- Sesiones seguras con tokens (8 horas de duración)
+- Aislamiento de datos por docente
 
 ---
 
-## 💻 Requisitos
+## Requisitos
 
 ### Hardware Mínimo
+
 - **CPU**: Intel i5 / AMD Ryzen 5 o superior
 - **RAM**: 4 GB (8 GB recomendado)
 - **Disco**: 5 GB libres
 - **Cámara**: Webcam USB o integrada (720p+)
 
 ### Software
+
 - **OS**: Windows 10/11, macOS 10.15+, o Ubuntu 20.04+
 - **Python**: 3.8 - 3.11
+- **PostgreSQL**: 12 o superior
 - **Git**: Para clonar el repositorio
 
 ---
 
-## 🚀 Instalación
+## Instalación
 
 ### Opción 1: Instalación Automatizada (Recomendado)
 
@@ -171,39 +172,47 @@ source .venv/bin/activate
 
 # 4. Instalar dependencias
 pip install -r requirements.txt
+
+# 5. Configurar base de datos
+# Crear archivo .env con DATABASE_URL
+# Ejecutar: python setup_database.py
 ```
 
 ---
 
-## 📖 Uso
+## Uso
 
 ### Opción A: Sistema con Autenticación (Recomendado para Docentes)
 
-#### 1️⃣ Iniciar el Servidor Web
+#### 1. Iniciar el Servidor Web
+
 ```bash
-python mobile_server.py
+python start_server.py
 ```
 
-#### 2️⃣ Acceder al Sistema
+#### 2. Acceder al Sistema
+
 - **Desde PC**: http://localhost:5000/login
 - **Desde teléfono**: http://[IP-MOSTRADA]:5000/login
 
-#### 3️⃣ Registrarse o Ingresar
-- Primera vez: Crea tu cuenta de docente
-- Siguientes veces: Ingresa con tu usuario y contraseña
+#### 3. Registrarse o Ingresar
 
-#### 4️⃣ Gestionar tus Clases
-- Agrega materias desde el dashboard
-- Registra estudiantes en cada materia
-- Toma asistencia desde PC o móvil
+- Primera vez: Crear cuenta de docente
+- Siguientes veces: Ingresar con usuario y contraseña
 
-📖 **Guía completa**: Ver [GUIA_DOCENTES.md](GUIA_DOCENTES.md)
+#### 4. Gestionar Clases
+
+- Agregar materias desde el dashboard
+- Registrar estudiantes en cada materia
+- Tomar asistencia desde PC o móvil
+
+**Guía completa**: Ver [GUIA_DOCENTES.md](GUIA_DOCENTES.md)
 
 ---
 
 ### Opción B: Sistema Tradicional (Sin Login)
 
-### 1️⃣ Iniciar la Aplicación
+#### 1. Iniciar la Aplicación
 
 ```bash
 # Activar entorno virtual primero
@@ -214,123 +223,131 @@ source .venv/bin/activate  # Linux/macOS
 python attendance.py
 ```
 
-### 2️⃣ Registrar Estudiantes
+#### 2. Registrar Estudiantes
 
-1. Click en **"Inscribir un Nuevo Héroe"**
-2. Ingresar:
-   - Número de Matrícula
-   - Nombre completo
-3. Click en **"Invocar el Rostro"**
+1. Click en "Inscribir un Nuevo Estudiante"
+2. Ingresar número de matrícula y nombre completo
+3. Click en "Capturar Rostro"
 4. Posicionar rostro frente a cámara
 5. Sistema captura 50 fotos automáticamente
 
-### 3️⃣ Entrenar el Modelo
+#### 3. Entrenar el Modelo
 
 1. Después de registrar estudiantes
 2. Sistema entrena automáticamente
 3. Genera modelo `Trainner.yml`
 
-### 4️⃣ Tomar Asistencia
+#### 4. Tomar Asistencia
 
-**Opción A - Desde PC:**
-1. Click en **"Convocar el Verbo de los Héroes"**
+**Desde PC:**
+1. Click en "Tomar Asistencia"
 2. Ingresar nombre de la materia
 3. Sistema reconoce rostros automáticamente
 4. Asistencia guardada en CSV
 
-**Opción B - Desde Smartphone (NUEVO v2.1.0):**
-1. Ejecutar: `start_mobile.bat` (Windows) o `python start_mobile_server.py`
-2. Escanear QR code con tu teléfono
+**Desde Smartphone:**
+1. Ejecutar servidor móvil
+2. Escanear código QR con teléfono
 3. Seleccionar materia en interfaz móvil
-4. Presionar "▶️ Iniciar Asistencia"
+4. Iniciar asistencia
 5. Ver reconocimientos en tiempo real
 
-📱 **[Ver Guía Completa de Control Móvil](MOBILE_GUIDE.md)**
+**Ver Guía Completa de Control Móvil**: [MOBILE_GUIDE.md](MOBILE_GUIDE.md)
 
-### 5️⃣ Ver Registros
+#### 5. Ver Registros
 
-1. Click en **"Consultar las Tablas del Destino"**
+1. Click en "Consultar Asistencia"
 2. Ver historial completo de asistencias
-6. Click en **"Grabar el Conocimiento"** para entrenar
-
-### 3️⃣ Tomar Asistencia
-
-1. Click en **"Convocar el Verbo de los Héroes"**
-2. Ingresar nombre de la materia/curso
-3. Click en **"Registrar Asistencia"**
-4. Estudiantes se posicionan frente a cámara
-5. Sistema registra automáticamente (20 segundos)
-6. Ver tabla de resultados
-
-### 4️⃣ Ver Reportes
-
-1. Click en **"Consultar las Tablas del Destino"**
-2. Ingresar nombre de la materia
-3. Click en **"Ver Asistencia"**
-4. Ver tabla consolidada con porcentajes
+3. Exportar reportes en CSV
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```
 Sistema-de-Control-de-Asistencia-con-Reconocimiento-Facial-usando-IA/
 │
-├── 📄 Archivos Principales
+├── Archivos Principales
 │   ├── attendance.py               # Interfaz gráfica principal
 │   ├── takeImage.py                # Captura de imágenes
 │   ├── trainImage.py               # Entrenamiento del modelo
 │   ├── automaticAttedance.py       # Asistencia automática
-│   └── show_attendance.py          # Visualización de reportes
+│   ├── show_attendance.py          # Visualización de reportes
+│   ├── mobile_server.py            # Servidor web Flask
+│   └── start_server.py             # Script de inicio
 │
-├── 🛠️ Utilidades (v2.0.0)
+├── Utilidades
 │   └── utils/
 │       ├── logger.py               # Sistema de logging
 │       ├── config_manager.py       # Gestor de configuración
 │       ├── exceptions.py           # Excepciones personalizadas
 │       └── __init__.py
 │
-├── ⚙️ Configuración
+├── Configuración
 │   └── config/
 │       ├── default_config.json     # Configuración por defecto
-│       ├── local_config.json       # Configuración personal (opcional)
+│       ├── recognition_config.json  # Configuración de reconocimiento
 │       └── README.md               # Documentación de configuración
 │
-├── 📸 Datos de Entrenamiento
+├── Datos de Entrenamiento
 │   ├── TrainingImage/              # Fotos de estudiantes
 │   ├── TrainingImageLabel/         # Modelo entrenado
 │   ├── StudentDetails/             # Datos de estudiantes
 │   └── Attendance/                 # Registros de asistencia
 │
-├── 🎨 Recursos Visuales
+├── Recursos Visuales
 │   ├── UI_Image/                   # Imágenes de interfaz
 │   └── haarcascade_*.xml           # Clasificadores faciales
 │
-├── 📚 Documentación
+├── Templates
+│   └── templates/                  # Plantillas HTML
+│
+├── Documentación
 │   ├── README.md                   # Este archivo
 │   ├── README_ESPAÑOL.md           # Documentación en español
-│   ├── CONTRIBUTING.md             # Guía de contribución
-│   ├── CHANGELOG.md                # Histórico de versiones
-│   └── RESUMEN_CAMBIOS.md          # Resumen de cambios
+│   ├── MOBILE_GUIDE.md             # Guía de uso móvil
+│   ├── GUIA_DOCENTES.md            # Guía para docentes
+│   └── EVALUACION_PROFESIONAL.md   # Evaluación del proyecto
 │
-├── 🔧 Scripts de Instalación
-│   ├── install.ps1                 # PowerShell (Windows)
+├── Scripts de Instalación
+│   ├── install.ps1                  # PowerShell (Windows)
 │   ├── install.bat                 # Batch (Windows)
-│   └── install.sh                  # Bash (Linux/macOS)
+│   └── install.sh                   # Bash (Linux/macOS)
 │
-└── 📋 Configuración del Proyecto
+└── Configuración del Proyecto
     ├── requirements.txt            # Dependencias Python
     ├── .gitignore                  # Exclusiones de Git
+    ├── .env.example                # Ejemplo de variables de entorno
     └── __init__.py                 # Inicializador de paquete
 ```
 
 ---
 
-## ⚙️ Configuración
+## Configuración
 
-CLASS VISION utiliza un sistema de configuración JSON flexible.
+CLASS VISION utiliza un sistema de configuración flexible mediante archivos JSON y variables de entorno.
 
-### Crear Configuración Personalizada
+### Variables de Entorno
+
+Crear archivo `.env` basado en `.env.example`:
+
+```env
+# Flask Configuration
+FLASK_DEBUG=False
+FLASK_SECRET_KEY=your-secret-key-here
+
+# Database
+DATABASE_URL=postgresql://postgres:postgres@localhost:5501/class_vision
+
+# Security
+BCRYPT_ROUNDS=12
+SESSION_TIMEOUT_HOURS=8
+
+# OpenCV
+CAMERA_INDEX=0
+```
+
+### Configuración JSON
 
 ```bash
 # Copiar configuración por defecto
@@ -346,19 +363,19 @@ nano config/local_config.json     # Linux/macOS
 ```json
 {
   "camera": {
-    "capture_duration_seconds": 20,    // Tiempo de captura
-    "images_per_student": 50           // Fotos por estudiante
+    "capture_duration_seconds": 20,
+    "images_per_student": 50
   },
   "recognition": {
-    "confidence_threshold": 70         // Umbral de confianza (0-100)
+    "confidence_threshold": 70
   },
   "tts": {
-    "enabled": true,                   // Activar síntesis de voz
+    "enabled": true,
     "language": "spanish"
   },
   "logging": {
-    "enabled": true,                   // Activar logs
-    "level": "INFO"                    // DEBUG, INFO, WARNING, ERROR
+    "enabled": true,
+    "level": "INFO"
   }
 }
 ```
@@ -367,17 +384,17 @@ Ver documentación completa en [`config/README.md`](config/README.md).
 
 ---
 
-## 🤝 Contribuir
+## Contribuir
 
-¡Las contribuciones son bienvenidas! Por favor lee nuestra [Guía de Contribución](CONTRIBUTING.md) para conocer el proceso.
+Las contribuciones son bienvenidas. Por favor lee nuestra [Guía de Contribución](CONTRIBUTING.md) para conocer el proceso.
 
 ### Proceso Rápido
 
-1. **Fork** el repositorio
-2. **Crea** una rama: `git checkout -b feature/mi-feature`
-3. **Commit** cambios: `git commit -m 'feat: agregar nueva característica'`
-4. **Push**: `git push origin feature/mi-feature`
-5. **Abre** un Pull Request
+1. Fork el repositorio
+2. Crea una rama: `git checkout -b feature/mi-feature`
+3. Commit cambios: `git commit -m 'feat: agregar nueva característica'`
+4. Push: `git push origin feature/mi-feature`
+5. Abre un Pull Request
 
 ### Reportar Bugs
 
@@ -389,58 +406,37 @@ Abre un [Issue](https://github.com/endeeeeeeeee/Sistema-de-Control-de-Asistencia
 
 ---
 
-## 📜 Licencia
+## Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver [LICENSE](LICENSE) para más detalles.
 
 ---
 
-## 👥 Autores
+## Autores
 
-<table>
-  <tr>
-    <td align="center">
-      <a href="https://github.com/itzanvaldivia">
-        <img src="https://github.com/itzanvaldivia.png" width="100px;" alt="Itzan Valdivia"/>
-        <br />
-        <sub><b>Itzan Valdivia</b></sub>
-      </a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/endeeeeeeeee">
-        <img src="https://github.com/endeeeeeeeee.png" width="100px;" alt="Ender Rosales"/>
-        <br />
-        <sub><b>Ender Rosales</b></sub>
-      </a>
-    </td>
-  </tr>
-</table>
+- **Itzan Valdivia** - [@itzanvaldivia](https://github.com/itzanvaldivia)
+- **Ender Rosales** - [@endeeeeeeeee](https://github.com/endeeeeeeeee)
 
 ---
 
-## 🌟 Agradecimientos
+## Agradecimientos
 
 - OpenCV por la biblioteca de visión por computadora
-- Tkinter por la interfaz gráfica
+- Flask por el framework web
+- SQLAlchemy por el ORM
 - Comunidad de Python por las excelentes librerías
 
 ---
 
-## 📞 Contacto
+## Contacto
 
 ¿Preguntas o sugerencias? Abre un [Issue](https://github.com/endeeeeeeeee/Sistema-de-Control-de-Asistencia-con-Reconocimiento-Facial-usando-IA/issues) o contáctanos:
 
-- 📧 Email: [Contacto](mailto:tu-email@ejemplo.com)
-- 🐛 Issues: [GitHub Issues](https://github.com/endeeeeeeeee/Sistema-de-Control-de-Asistencia-con-Reconocimiento-Facial-usando-IA/issues)
+- Email: [Contacto](mailto:tu-email@ejemplo.com)
+- Issues: [GitHub Issues](https://github.com/endeeeeeeeee/Sistema-de-Control-de-Asistencia-con-Reconocimiento-Facial-usando-IA/issues)
 
 ---
 
-<div align="center">
+Hecho con Python y OpenCV
 
-**🏛️ ¡Que los dioses del código bendigan este proyecto! 🏛️**
-
-Hecho con ❤️ usando Python y OpenCV
-
-[⬆ Volver arriba](#-class-vision---sistema-de-control-de-asistencia)
-
-</div>
+[Volver arriba](#class-vision---sistema-de-control-de-asistencia)
