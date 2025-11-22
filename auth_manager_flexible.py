@@ -126,27 +126,30 @@ class AuthManager:
             print(f"❌ Error en registro: {str(e)}")
             return {'success': False, 'error': str(e)}
     
-    def login(self, email, password):
-        """Login de usuario"""
+    def login(self, username, password):
+        """Login de usuario - acepta email o codigo_usuario"""
         try:
             password_hash = self.hash_password(password)
             
             query = text("""
                 SELECT id, codigo_usuario, nombre_completo, email, activo
                 FROM usuarios
-                WHERE LOWER(email) = LOWER(:email) AND password_hash = :password_hash
+                WHERE (LOWER(email) = LOWER(:username) OR LOWER(codigo_usuario) = LOWER(:username)) 
+                AND password_hash = :password_hash
             """)
             
             user = self.session.execute(query, {
-                'email': email,
+                'username': username,
                 'password_hash': password_hash
             }).fetchone()
             
             if not user:
-                return {'success': False, 'error': 'Email o contraseña incorrectos'}
+                print(f"❌ Usuario no encontrado o contraseña incorrecta: {username}")
+                return None, None
             
             if not user[4]:  # activo
-                return {'success': False, 'error': 'Usuario inactivo'}
+                print(f"❌ Usuario inactivo: {username}")
+                return None, None
             
             # Generar token
             token = secrets.token_urlsafe(32)
@@ -176,21 +179,19 @@ class AuthManager:
             
             print(f"✅ Login exitoso: {user[1]} - {user[2]}")
             
-            return {
-                'success': True,
-                'token': token,
-                'user': {
-                    'id': user[0],
-                    'codigo_usuario': user[1],
-                    'nombre_completo': user[2],
-                    'email': user[3]
-                }
+            user_dict = {
+                'id': user[0],
+                'codigo_usuario': user[1],
+                'nombre_completo': user[2],
+                'email': user[3]
             }
+            
+            return user_dict, token
             
         except Exception as e:
             self.session.rollback()
             print(f"❌ Error en login: {str(e)}")
-            return {'success': False, 'error': str(e)}
+            return None, None
     
     def validate_token(self, token):
         """Validar token de sesión"""

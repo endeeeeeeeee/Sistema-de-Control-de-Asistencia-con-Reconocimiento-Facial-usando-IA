@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vincular Dispositivo - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/vincular_dispositivo.css">
+</head>
+<body>
+    <div class="container">
+        <div class="logo">📱</div>
+        <h1>Vincular Dispositivo</h1>
+        
+        <div id="statusContainer">
+            <div class="status loading">
+                <div class="spinner"></div>
+                Verificando código...
+            </div>
+        </div>
+
+        <div id="infoContainer" style="display: none;">
+            <div class="info">
+                <strong>Equipo:</strong>
+                <span id="equipoNombre">Cargando...</span>
+            </div>
+            <button class="btn" onclick="abrirSesionAsistencia()">
+                📹 Abrir Sesión de Asistencia
+            </button>
+        </div>
+    </div>
+
+    <script src="/static/js/vincular_dispositivo.js"></script>
+</body>
+</html>

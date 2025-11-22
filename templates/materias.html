@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Materias - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/materias.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <a href="/dashboard" class="btn btn-back">← Volver al Dashboard</a>
+                <h1 style="margin-top: 20px;">Mis Materias</h1>
+            </div>
+            <button class="btn btn-primary" id="btnNewMateria">
+                ➕ Nueva Materia
+            </button>
+        </div>
+
+        <div id="materiasContainer">
+            <div class="loading">
+                <div class="spinner"></div>
+                <p>Cargando materias...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Nueva Materia -->
+    <div class="modal" id="modalNewMateria">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Nueva Materia</h2>
+            </div>
+            <form id="formNewMateria">
+                <div class="form-group">
+                    <label for="codigo">Código de Materia *</label>
+                    <input type="text" class="form-control" id="codigo" required placeholder="Ej: MAT-101">
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Nombre de la Materia *</label>
+                    <input type="text" class="form-control" id="nombre" required placeholder="Ej: Matemáticas Básicas">
+                </div>
+                <div class="form-group">
+                    <label for="nivel">Nivel/Grado</label>
+                    <input type="text" class="form-control" id="nivel" placeholder="Ej: Primer Semestre">
+                </div>
+                <div class="form-group">
+                    <label>Días de Clase *</label>
+                    <div class="days-selector">
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="dias" value="LUNES"> Lunes
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="dias" value="MARTES"> Martes
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="dias" value="MIERCOLES"> Miércoles
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="dias" value="JUEVES"> Jueves
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="dias" value="VIERNES"> Viernes
+                        </label>
+                        <label class="day-checkbox">
+                            <input type="checkbox" name="dias" value="SABADO"> Sábado
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="horaInicio">Hora de Inicio *</label>
+                    <input type="time" class="form-control" id="horaInicio" required>
+                </div>
+                <div class="form-group">
+                    <label for="horaFin">Hora de Fin *</label>
+                    <input type="time" class="form-control" id="horaFin" required>
+                </div>
+                <div class="form-group">
+                    <label for="tolerancia">Tolerancia (minutos)</label>
+                    <input type="number" class="form-control" id="tolerancia" value="15" min="0" max="60">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-cancel" id="btnCancelModal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Crear Materia</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/materias.js"></script>
+</body>
+</html>

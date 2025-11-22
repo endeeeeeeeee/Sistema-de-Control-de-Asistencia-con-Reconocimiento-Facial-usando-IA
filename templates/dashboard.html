@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">
+            <h1>CLASS VISION</h1>
+            <p>Sistema de Asistencia</p>
+        </div>
+
+        <nav>
+            <ul class="menu">
+                <li class="menu-section">Principal</li>
+                <li class="menu-item">
+                    <a href="/dashboard" class="menu-link active">
+                        <span class="icon">📊</span>
+                        Dashboard
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/materias" class="menu-link">
+                        <span class="icon">📚</span>
+                        Mis Materias
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/estudiantes" class="menu-link">
+                        <span class="icon">👥</span>
+                        Estudiantes
+                    </a>
+                </li>
+                
+                <li class="menu-section">Asistencia</li>
+                <li class="menu-item">
+                    <a href="/tomar-asistencia" class="menu-link">
+                        <span class="icon">📸</span>
+                        Tomar Asistencia
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="/codigos-qr" class="menu-link">
+                        <span class="icon">📱</span>
+                        Códigos QR
+                    </a>
+                </li>
+
+                <li class="menu-section">Reportes & Análisis</li>
+                <li class="menu-item">
+                    <a href="/reportes" class="menu-link">
+                        <span class="icon">📊</span>
+                        Reportes & Alertas
+                    </a>
+                </li>
+
+                <li class="menu-section">Sistema</li>
+                <li class="menu-item">
+                    <a href="/configuracion" class="menu-link">
+                        <span class="icon">⚙️</span>
+                        Configuración
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link" id="logoutBtn">
+                        <span class="icon">🚪</span>
+                        Cerrar Sesión
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="topbar">
+            <div class="topbar-left">
+                <h2>Dashboard</h2>
+                <p id="currentDate"></p>
+            </div>
+            <div class="topbar-right">
+                <button class="notification-btn">
+                    🔔
+                    <span class="notification-badge" id="notificationCount">0</span>
+                </button>
+                <div class="user-menu">
+                    <div class="user-avatar" id="userAvatar">A</div>
+                    <div class="user-info">
+                        <div class="user-name" id="userName">Usuario</div>
+                        <div class="user-role" id="userRole">Docente</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Stats Cards -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalMaterias">0</div>
+                            <div class="stat-label">Total Materias</div>
+                            <div class="stat-change positive">📈 +0 este período</div>
+                        </div>
+                        <div class="stat-icon primary">📚</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="totalEstudiantes">0</div>
+                            <div class="stat-label">Total Estudiantes</div>
+                            <div class="stat-change positive">📈 Inscritos activos</div>
+                        </div>
+                        <div class="stat-icon success">👥</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="asistenciasHoy">0</div>
+                            <div class="stat-label">Asistencias Hoy</div>
+                            <div class="stat-change positive" id="asistenciaChange">📊 0% vs ayer</div>
+                        </div>
+                        <div class="stat-icon warning">📸</div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div>
+                            <div class="stat-value" id="porcentajeAsistencia">0%</div>
+                            <div class="stat-label">% Asistencia</div>
+                            <div class="stat-change" id="porcentajeChange">📊 Promedio general</div>
+                        </div>
+                        <div class="stat-icon error">📊</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="/tomar-asistencia" class="quick-action">
+                    <div class="quick-action-icon">📸</div>
+                    <div class="quick-action-text">Tomar Asistencia</div>
+                </a>
+                <a href="/materias" class="quick-action">
+                    <div class="quick-action-icon">➕</div>
+                    <div class="quick-action-label">Nueva Materia</div>
+                </a>
+                <a href="/estudiantes" class="quick-action">
+                    <div class="quick-action-icon">👤</div>
+                    <div class="quick-action-label">Registrar Estudiante</div>
+                </a>
+                <a href="/codigos-qr" class="quick-action">
+                    <div class="quick-action-icon">📱</div>
+                    <div class="quick-action-label">Generar QR</div>
+                </a>
+                <a href="/reportes" class="quick-action">
+                    <div class="quick-action-icon">📊</div>
+                    <div class="quick-action-label">Ver Reportes</div>
+                </a>
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid">
+                <!-- Mis Materias -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Mis Materias</h3>
+                        <a href="/materias" class="btn btn-secondary">Ver todas</a>
+                    </div>
+                    <div id="materiasContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Cargando materias...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Alertas Recientes -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Alertas Recientes</h3>
+                        <a href="/alertas" class="btn btn-secondary">Ver todas</a>
+                    </div>
+                    <div id="alertasContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <p>Cargando alertas...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

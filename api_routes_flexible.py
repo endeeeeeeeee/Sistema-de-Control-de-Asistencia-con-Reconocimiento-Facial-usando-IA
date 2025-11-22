@@ -90,27 +90,124 @@ def token_required(f):
 # =====================================================
 
 @api_bp.route('/auth/register', methods=['POST'])
+@api_bp.route('/auth/registro', methods=['POST'])  # Ruta en español
 def register():
-    """Registro de nuevo usuario"""
+    """Registro de nuevo usuario con captura de 50 fotos y entrenamiento facial"""
     try:
         data = request.json
         auth = AuthManager()
         
+        # Mapear tanto 'ci' como 'cedula' al mismo campo
+        cedula = data.get('ci') or data.get('cedula')
+        
+        # Registrar usuario básico en BD
         result = auth.register(
             nombre_completo=data.get('nombre_completo'),
             email=data.get('email'),
             password=data.get('password'),
             telefono=data.get('telefono'),
-            ci=data.get('ci'),
+            ci=cedula,
             fecha_nacimiento=data.get('fecha_nacimiento'),
             foto_face_vector=data.get('foto_base64')
         )
         
-        if result['success']:
-            return jsonify(result), 201
-        return jsonify(result), 400
+        if not result['success']:
+            return jsonify(result), 400
+        
+        # Si hay fotos para entrenar el modelo facial
+        fotos_base64 = data.get('fotos_base64', [])
+        if fotos_base64 and len(fotos_base64) > 0:
+            codigo_usuario = result['codigo_usuario']
+            print(f"📸 Procesando {len(fotos_base64)} fotos para {codigo_usuario}")
+            
+            import cv2
+            import numpy as np
+            import base64
+            import os
+            
+            # Crear directorio para fotos de entrenamiento
+            training_dir = f'TrainingImage/{codigo_usuario}'
+            os.makedirs(training_dir, exist_ok=True)
+            
+            # Guardar cada foto
+            saved_count = 0
+            for idx, foto_b64 in enumerate(fotos_base64, 1):
+                try:
+                    # Decodificar base64
+                    if ',' in foto_b64:
+                        foto_b64 = foto_b64.split(',')[1]
+                    img_data = base64.b64decode(foto_b64)
+                    nparr = np.frombuffer(img_data, np.uint8)
+                    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+                    
+                    if img is not None:
+                        foto_path = f'{training_dir}/{codigo_usuario}_{idx}.jpg'
+                        cv2.imwrite(foto_path, img)
+                        saved_count += 1
+                except Exception as e:
+                    print(f"⚠️ Error guardando foto {idx}: {str(e)}")
+                    continue
+            
+            print(f"✅ Guardadas {saved_count}/{len(fotos_base64)} fotos")
+            
+            # Entrenar modelo facial si se guardaron suficientes fotos
+            if saved_count >= 30:  # Mínimo 30 fotos para entrenar
+                try:
+                    print(f"🎓 Entrenando modelo facial para {codigo_usuario}...")
+                    
+                    face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+                    recognizer = cv2.face.LBPHFaceRecognizer_create()
+                    
+                    faces_data = []
+                    labels = []
+                    
+                    # Leer todas las fotos y extraer rostros
+                    for filename in os.listdir(training_dir):
+                        if filename.endswith('.jpg'):
+                            img_path = os.path.join(training_dir, filename)
+                            img = cv2.imread(img_path)
+                            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+                            
+                            # Detectar rostros
+                            faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+                            
+                            for (x, y, w, h) in faces:
+                                face_roi = gray[y:y+h, x:x+w]
+                                faces_data.append(face_roi)
+                                labels.append(result['user_id'])
+                    
+                    if len(faces_data) > 0:
+                        # Entrenar modelo
+                        recognizer.train(faces_data, np.array(labels))
+                        
+                        # Guardar modelo
+                        model_path = f'TrainingImageLabel/{codigo_usuario}_model.yml'
+                        os.makedirs('TrainingImageLabel', exist_ok=True)
+                        recognizer.save(model_path)
+                        
+                        print(f"✅ Modelo facial entrenado: {model_path} ({len(faces_data)} rostros)")
+                        result['modelo_entrenado'] = True
+                        result['rostros_entrenados'] = len(faces_data)
+                    else:
+                        print(f"⚠️ No se detectaron rostros en las fotos")
+                        result['modelo_entrenado'] = False
+                        result['warning'] = 'No se detectaron rostros para entrenar'
+                        
+                except Exception as e:
+                    print(f"❌ Error entrenando modelo: {str(e)}")
+                    result['modelo_entrenado'] = False
+                    result['error_entrenamiento'] = str(e)
+            else:
+                print(f"⚠️ Insuficientes fotos ({saved_count}) para entrenar modelo")
+                result['modelo_entrenado'] = False
+                result['warning'] = f'Solo se guardaron {saved_count} fotos, se necesitan mínimo 30'
+        
+        return jsonify(result), 201
         
     except Exception as e:
+        print(f"❌ Error en registro: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return jsonify({'success': False, 'error': str(e)}), 500
 
 @api_bp.route('/auth/login', methods=['POST'])
@@ -118,19 +215,39 @@ def login():
     """Login de usuario"""
     try:
         data = request.json
+        print(f"\n=== API_BP LOGIN ===")
+        print(f"Data recibida: {data}")
+        
         if not data:
             return jsonify({'success': False, 'error': 'Datos no proporcionados'}), 400
         
+        username = data.get('username') or data.get('email')
+        password = data.get('password')
+        
+        print(f"Username: {username}")
+        print(f"Password: {'***' if password else 'None'}")
+        
+        if not username or not password:
+            print("❌ Faltan credenciales")
+            return jsonify({'success': False, 'error': 'Usuario y contraseña requeridos'}), 400
+        
         auth = AuthManager()
         
-        result = auth.login(
-            email=data.get('email'),
-            password=data.get('password')
-        )
+        # login() ahora acepta username (email o codigo_usuario) y retorna (user, token)
+        user, token = auth.login(username, password)
         
-        if result['success']:
-            return jsonify(result), 200
-        return jsonify(result), 401
+        print(f"Resultado: user={user is not None}, token={token is not None}")
+        
+        if user and token:
+            print("✅ Login exitoso")
+            return jsonify({
+                'success': True,
+                'user': user,
+                'token': token
+            }), 200
+        
+        print("❌ Credenciales inválidas")
+        return jsonify({'success': False, 'error': 'Credenciales inválidas'}), 401
         
     except Exception as e:
         error_msg = str(e)
@@ -563,6 +680,215 @@ def mark_attendance():
             session.close()
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@api_bp.route('/equipos/<int:equipo_id>/asistencias-hoy', methods=['GET'])
+@token_required
+def get_today_attendance(equipo_id):
+    """Obtener asistencias del día para un equipo"""
+    try:
+        session = get_db_session()
+        
+        query = text("""
+            SELECT DISTINCT
+                u.id,
+                u.codigo_usuario,
+                u.nombre_completo,
+                al.fecha,
+                al.hora_entrada,
+                al.metodo_entrada
+            FROM asistencia_log al
+            JOIN membresias m ON al.membresia_id = m.id
+            JOIN usuarios u ON m.usuario_id = u.id
+            WHERE m.equipo_id = :equipo_id
+            AND al.fecha = CURRENT_DATE
+            ORDER BY al.hora_entrada DESC
+        """)
+        
+        asistencias = session.execute(query, {'equipo_id': equipo_id}).fetchall()
+        session.close()
+        
+        return jsonify({
+            'success': True,
+            'asistencias': [{
+                'id': a[0],
+                'codigo_usuario': a[1],
+                'nombre_completo': a[2],
+                'fecha': a[3].isoformat() if a[3] else None,
+                'hora_entrada': a[4].isoformat() if a[4] else None,
+                'metodo': a[5]
+            } for a in asistencias]
+        }), 200
+        
+    except Exception as e:
+        if 'session' in locals():
+            session.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+# =====================================================
+# SESIONES DE ASISTENCIA
+# =====================================================
+
+@api_bp.route('/sesiones/activa/<int:equipo_id>', methods=['GET'])
+@token_required
+def check_active_session(equipo_id):
+    """Verificar si hay una sesión activa para un equipo"""
+    try:
+        session = get_db_session()
+        
+        # Crear tabla si no existe
+        create_table_query = text("""
+            CREATE TABLE IF NOT EXISTS sesiones_asistencia (
+                id SERIAL PRIMARY KEY,
+                equipo_id INTEGER NOT NULL REFERENCES equipos(id),
+                usuario_creador_id INTEGER NOT NULL REFERENCES usuarios(id),
+                fecha_inicio TIMESTAMP DEFAULT NOW(),
+                fecha_fin TIMESTAMP,
+                duracion_minutos INTEGER DEFAULT 30,
+                estado VARCHAR(20) DEFAULT 'activa'
+            )
+        """)
+        session.execute(create_table_query)
+        session.commit()
+        
+        # Buscar sesión activa en las últimas 24 horas
+        query = text("""
+            SELECT id, fecha_inicio
+            FROM sesiones_asistencia
+            WHERE equipo_id = :equipo_id 
+            AND fecha_inicio >= NOW() - INTERVAL '24 hours'
+            AND (fecha_fin IS NULL OR fecha_fin >= NOW() - INTERVAL '2 hours')
+            ORDER BY fecha_inicio DESC
+            LIMIT 1
+        """)
+        
+        sesion = session.execute(query, {'equipo_id': equipo_id}).fetchone()
+        session.close()
+        
+        if sesion:
+            return jsonify({
+                'success': True,
+                'sesion_activa': True,
+                'sesion_id': sesion[0],
+                'fecha_inicio': sesion[1].isoformat() if sesion[1] else None
+            }), 200
+        else:
+            return jsonify({
+                'success': True,
+                'sesion_activa': False
+            }), 200
+            
+    except Exception as e:
+        if session:
+            session.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/sesiones/iniciar', methods=['POST'])
+@token_required
+def start_session():
+    """Iniciar una nueva sesión de asistencia"""
+    try:
+        data = request.json
+        session = get_db_session()
+        user_id = request.current_user['id']
+        equipo_id = data.get('equipo_id')
+        duracion_minutos = data.get('duracion_minutos', 30)
+        
+        # Verificar que el usuario sea líder del equipo
+        verificar_query = text("""
+            SELECT id FROM membresias
+            WHERE usuario_id = :user_id 
+            AND equipo_id = :equipo_id 
+            AND rol = 'lider'
+            AND estado = 'activo'
+        """)
+        
+        membresia = session.execute(verificar_query, {
+            'user_id': user_id,
+            'equipo_id': equipo_id
+        }).fetchone()
+        
+        if not membresia:
+            session.close()
+            return jsonify({'success': False, 'error': 'Solo el líder puede iniciar sesiones'}), 403
+        
+        # Crear tabla si no existe
+        create_table_query = text("""
+            CREATE TABLE IF NOT EXISTS sesiones_asistencia (
+                id SERIAL PRIMARY KEY,
+                equipo_id INTEGER NOT NULL REFERENCES equipos(id),
+                usuario_creador_id INTEGER NOT NULL REFERENCES usuarios(id),
+                fecha_inicio TIMESTAMP DEFAULT NOW(),
+                fecha_fin TIMESTAMP,
+                duracion_minutos INTEGER DEFAULT 30,
+                estado VARCHAR(20) DEFAULT 'activa'
+            )
+        """)
+        session.execute(create_table_query)
+        session.commit()
+        
+        # Insertar sesión
+        insert_query = text("""
+            INSERT INTO sesiones_asistencia (
+                equipo_id, usuario_creador_id, duracion_minutos
+            ) VALUES (
+                :equipo_id, :user_id, :duracion
+            )
+            RETURNING id, fecha_inicio
+        """)
+        
+        result = session.execute(insert_query, {
+            'equipo_id': equipo_id,
+            'user_id': user_id,
+            'duracion': duracion_minutos
+        })
+        
+        sesion = result.fetchone()
+        session.commit()
+        session.close()
+        
+        return jsonify({
+            'success': True,
+            'sesion_id': sesion[0],
+            'fecha_inicio': sesion[1].isoformat() if sesion[1] else None,
+            'message': 'Sesión iniciada exitosamente'
+        }), 200
+        
+    except Exception as e:
+        if session:
+            session.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/sesiones/finalizar/<int:sesion_id>', methods=['POST'])
+@token_required
+def end_session(sesion_id):
+    """Finalizar una sesión de asistencia"""
+    try:
+        session = get_db_session()
+        
+        update_query = text("""
+            UPDATE sesiones_asistencia
+            SET fecha_fin = NOW(), estado = 'finalizada'
+            WHERE id = :sesion_id
+            RETURNING id
+        """)
+        
+        result = session.execute(update_query, {'sesion_id': sesion_id})
+        session.commit()
+        
+        if result.rowcount > 0:
+            session.close()
+            return jsonify({
+                'success': True,
+                'message': 'Sesión finalizada exitosamente'
+            }), 200
+        else:
+            session.close()
+            return jsonify({'success': False, 'error': 'Sesión no encontrada'}), 404
+            
+    except Exception as e:
+        if session:
+            session.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
 # =====================================================
 # ESTADÍSTICAS
 # =====================================================
@@ -719,9 +1045,160 @@ def generate_individual_qr():
             session.close()
         return jsonify({'success': False, 'error': str(e)}), 500
 
+@api_bp.route('/qr/generar', methods=['POST'])
+@token_required
+def generate_qr_session():
+    """Generar QR de uso único para asistencia virtual (para cualquier miembro del equipo)"""
+    try:
+        data = request.json
+        session = get_db_session()
+        user_id = request.current_user['id']
+        equipo_id = data.get('equipo_id')
+        duracion_minutos = data.get('duracion_minutos', 5)
+        
+        print(f"🎫 Generando QR de sesión para equipo {equipo_id}")
+        
+        # Verificar que el usuario es líder o co-líder
+        lider_check = text("""
+            SELECT rol FROM membresias
+            WHERE usuario_id = :user_id AND equipo_id = :equipo_id 
+            AND estado = 'activo' AND rol IN ('lider', 'co-lider')
+        """)
+        lider = session.execute(lider_check, {
+            'user_id': user_id,
+            'equipo_id': equipo_id
+        }).fetchone()
+        
+        if not lider:
+            session.close()
+            return jsonify({'success': False, 'error': 'Solo líderes pueden generar QR'}), 403
+        
+        # Generar código QR único
+        import secrets
+        codigo_qr = f"QR-SESSION-{secrets.token_urlsafe(16)}"
+        
+        # Guardar en tabla codigos_temporales (sin usuario específico)
+        insert_qr = text("""
+            INSERT INTO codigos_temporales (
+                codigo, tipo, equipo_id, expira_en, valido_hasta, usado, 
+                metadata, generado_por
+            ) VALUES (
+                :codigo, 'QR_SESION_VIRTUAL', :equipo_id, 
+                NOW() + INTERVAL ':minutos minutes', 
+                NOW() + INTERVAL ':minutos minutes',
+                false, :metadata, :generado_por
+            )
+            RETURNING id, expira_en
+        """)
+        
+        result = session.execute(insert_qr, {
+            'codigo': codigo_qr,
+            'equipo_id': equipo_id,
+            'minutos': duracion_minutos,
+            'metadata': f'{{"tipo": "sesion_virtual", "equipo_id": {equipo_id}}}',
+            'generado_por': user_id
+        })
+        
+        qr_data = result.fetchone()
+        qr_id = qr_data[0]
+        expira_en = qr_data[1]
+        
+        session.commit()
+        session.close()
+        
+        print(f"✅ QR de sesión generado: {codigo_qr}")
+        
+        return jsonify({
+            'success': True,
+            'codigo': codigo_qr,
+            'qr_id': qr_id,
+            'equipo_id': equipo_id,
+            'expira_en': expira_en.isoformat(),
+            'duracion_minutos': duracion_minutos,
+            'mensaje': 'QR generado exitosamente'
+        }), 201
+        
+    except Exception as e:
+        print(f"❌ Error generando QR de sesión: {str(e)}")
+        if 'session' in locals():
+            session.rollback()
+            session.close()
+        return jsonify({'success': False, 'error': str(e)}), 500
+
+@api_bp.route('/qr/verificar', methods=['POST'])
+def verificar_qr():
+    """Verificar validez del QR sin registrar asistencia (paso 1)"""
+    try:
+        data = request.json
+        codigo_qr = data.get('codigo_qr')
+        
+        if not codigo_qr:
+            return jsonify({'success': False, 'error': 'Código QR requerido'}), 400
+        
+        print(f"🔍 Verificando QR: {codigo_qr}")
+        
+        session = get_db_session()
+        
+        # Buscar código QR
+        qr_query = text("""
+            SELECT id, usuario_id, equipo_id, expira_en, usado, metadata
+            FROM codigos_temporales
+            WHERE codigo = :codigo AND tipo = 'QR_CLASE_VIRTUAL'
+        """)
+        qr = session.execute(qr_query, {'codigo': codigo_qr}).fetchone()
+        
+        if not qr:
+            session.close()
+            return jsonify({'success': False, 'error': 'Código QR inválido'}), 404
+        
+        qr_id, usuario_id, equipo_id, expira_en, usado, metadata = qr
+        
+        # Verificar si ya fue usado
+        if usado:
+            session.close()
+            return jsonify({'success': False, 'error': 'Este QR ya fue utilizado'}), 400
+        
+        # Verificar si expiró
+        if datetime.now() > expira_en:
+            session.close()
+            return jsonify({'success': False, 'error': 'Este QR ha expirado'}), 400
+        
+        # Obtener información del usuario y equipo
+        info_query = text("""
+            SELECT u.codigo_usuario, u.nombre_completo, e.nombre_equipo
+            FROM usuarios u, equipos e
+            WHERE u.id = :usuario_id AND e.id = :equipo_id
+        """)
+        info = session.execute(info_query, {
+            'usuario_id': usuario_id,
+            'equipo_id': equipo_id
+        }).fetchone()
+        
+        session.close()
+        
+        if not info:
+            return jsonify({'success': False, 'error': 'Usuario o equipo no encontrado'}), 404
+        
+        codigo_usuario, nombre_usuario, nombre_equipo = info
+        
+        return jsonify({
+            'success': True,
+            'mensaje': 'QR válido. Procede a captura facial.',
+            'codigo_usuario': codigo_usuario,
+            'usuario': nombre_usuario,
+            'equipo': nombre_equipo
+        })
+        
+    except Exception as e:
+        print(f"❌ Error verificando QR: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': f'Error en servidor: {str(e)}'}), 500
+
+
 @api_bp.route('/qr/validar', methods=['POST'])
 def validate_qr():
-    """Validar y usar QR de un solo uso (público, no requiere token)"""
+    """DEPRECATED: Validar y usar QR de un solo uso (público, no requiere token)"""
     try:
         data = request.json
         codigo_qr = data.get('codigo_qr')
@@ -837,6 +1314,219 @@ def validate_qr():
             session.rollback()
             session.close()
         return jsonify({'success': False, 'error': str(e)}), 500
+
+
+@api_bp.route('/qr/confirmar-asistencia', methods=['POST'])
+def confirmar_asistencia_qr():
+    """Validar rostro y confirmar asistencia (paso 2 - requiere foto)"""
+    try:
+        data = request.json
+        codigo_qr = data.get('codigo_qr')
+        imagen_base64 = data.get('imagen')
+        
+        if not codigo_qr or not imagen_base64:
+            return jsonify({'success': False, 'error': 'Código QR e imagen requeridos'}), 400
+        
+        print(f"🔍 Confirmando asistencia QR con validación facial: {codigo_qr}")
+        
+        session = get_db_session()
+        
+        # Buscar código QR
+        qr_query = text("""
+            SELECT id, usuario_id, equipo_id, expira_en, usado
+            FROM codigos_temporales
+            WHERE codigo = :codigo AND tipo = 'QR_CLASE_VIRTUAL'
+        """)
+        qr = session.execute(qr_query, {'codigo': codigo_qr}).fetchone()
+        
+        if not qr:
+            session.close()
+            return jsonify({'success': False, 'error': 'Código QR inválido'}), 404
+        
+        qr_id, usuario_id, equipo_id, expira_en, usado = qr
+        
+        # Verificar si ya fue usado
+        if usado:
+            session.close()
+            return jsonify({'success': False, 'error': 'Este QR ya fue utilizado'}), 400
+        
+        # Verificar si expiró
+        if datetime.now() > expira_en:
+            session.close()
+            return jsonify({'success': False, 'error': 'Este QR ha expirado'}), 400
+        
+        # Obtener código de usuario para validación facial
+        usuario_query = text("SELECT codigo_usuario FROM usuarios WHERE id = :usuario_id")
+        codigo_usuario = session.execute(usuario_query, {'usuario_id': usuario_id}).scalar()
+        
+        if not codigo_usuario:
+            session.close()
+            return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
+        
+        # Validar rostro con OpenCV
+        import cv2
+        import numpy as np
+        import base64
+        import os
+        
+        # Decodificar imagen
+        try:
+            if ',' in imagen_base64:
+                imagen_base64 = imagen_base64.split(',')[1]
+            img_data = base64.b64decode(imagen_base64)
+            nparr = np.frombuffer(img_data, np.uint8)
+            frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+        except Exception as e:
+            session.close()
+            return jsonify({'success': False, 'error': f'Error decodificando imagen: {str(e)}'}), 400
+        
+        # Cargar modelo facial del usuario
+        model_path = f'TrainingImageLabel/{codigo_usuario}_model.yml'
+        if not os.path.exists(model_path):
+            session.close()
+            return jsonify({
+                'success': False, 
+                'error': 'No se encontró modelo facial. Registra tu rostro primero.'
+            }), 404
+        
+        # Reconocer rostro
+        recognizer = cv2.face.LBPHFaceRecognizer_create()
+        recognizer.read(model_path)
+        
+        face_cascade = cv2.CascadeClassifier('haarcascade_frontalface_default.xml')
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
+        
+        if len(faces) == 0:
+            session.close()
+            return jsonify({
+                'success': False,
+                'error': 'No se detectó ningún rostro. Asegúrate de estar frente a la cámara.'
+            }), 400
+        
+        # Verificar el rostro detectado
+        rostro_valido = False
+        confianza = 0
+        mejor_confianza = 0
+        
+        print(f"👤 Detectados {len(faces)} rostro(s) en la imagen")
+        print(f"📊 Esperando usuario_id: {usuario_id} (del QR)")
+        
+        for idx, (x, y, w, h) in enumerate(faces, 1):
+            roi_gray = gray[y:y+h, x:x+w]
+            id_detectado, conf = recognizer.predict(roi_gray)
+            
+            # Convertir confianza (menor es mejor en LBPH)
+            confianza_porcentaje = max(0, 100 - conf)
+            
+            print(f"🔍 Rostro #{idx} - ID detectado: {id_detectado}, Confianza raw: {conf:.2f}, Confianza %: {confianza_porcentaje:.2f}%")
+            
+            # Guardar mejor confianza
+            if confianza_porcentaje > mejor_confianza:
+                mejor_confianza = confianza_porcentaje
+            
+            # Umbral reducido a 45% para testing
+            if confianza_porcentaje >= 45:
+                rostro_valido = True
+                confianza = confianza_porcentaje
+                print(f"✅ Rostro #{idx} ACEPTADO con {confianza_porcentaje:.2f}%")
+                break
+            else:
+                print(f"❌ Rostro #{idx} RECHAZADO - Confianza {confianza_porcentaje:.2f}% < 45%")
+        
+        if not rostro_valido:
+            session.close()
+            print(f"❌ VALIDACIÓN FALLIDA - Mejor confianza: {mejor_confianza:.2f}%")
+            return jsonify({
+                'success': False,
+                'error': f'Rostro no reconocido (confianza: {mejor_confianza:.1f}%). Se requiere mínimo 45%.',
+                'confianza': round(mejor_confianza, 2),
+                'rostros_detectados': len(faces)
+            }), 403
+        
+        # Obtener membresía
+        membresia_query = text("""
+            SELECT m.id, u.nombre_completo, e.nombre_equipo
+            FROM membresias m
+            JOIN usuarios u ON m.usuario_id = u.id
+            JOIN equipos e ON m.equipo_id = e.id
+            WHERE m.usuario_id = :usuario_id AND m.equipo_id = :equipo_id 
+            AND m.estado = 'activo'
+        """)
+        membresia = session.execute(membresia_query, {
+            'usuario_id': usuario_id,
+            'equipo_id': equipo_id
+        }).fetchone()
+        
+        if not membresia:
+            session.close()
+            return jsonify({'success': False, 'error': 'Membresía no encontrada'}), 404
+        
+        membresia_id, nombre_usuario, nombre_equipo = membresia
+        
+        # Verificar si ya marcó hoy
+        asistencia_check = text("""
+            SELECT id FROM asistencia_log
+            WHERE membresia_id = :membresia_id AND fecha = CURRENT_DATE
+        """)
+        ya_marco = session.execute(asistencia_check, {
+            'membresia_id': membresia_id
+        }).fetchone()
+        
+        if ya_marco:
+            session.close()
+            return jsonify({
+                'success': False, 
+                'error': 'Ya marcaste asistencia hoy'
+            }), 400
+        
+        # Marcar asistencia
+        insert_asistencia = text("""
+            INSERT INTO asistencia_log (
+                membresia_id, metodo_entrada, estado, notas
+            ) VALUES (
+                :membresia_id, 'qr', 'presente', :notas
+            )
+            RETURNING id
+        """)
+        
+        result = session.execute(insert_asistencia, {
+            'membresia_id': membresia_id,
+            'notas': f'QR + validación facial (confianza: {confianza:.1f}%)'
+        })
+        
+        asistencia_id = result.scalar()
+        
+        # Marcar QR como usado
+        update_qr = text("""
+            UPDATE codigos_temporales
+            SET usado = true, usado_en = NOW()
+            WHERE id = :qr_id
+        """)
+        session.execute(update_qr, {'qr_id': qr_id})
+        
+        session.commit()
+        session.close()
+        
+        print(f"✅ Asistencia confirmada - Usuario: {nombre_usuario}, Confianza: {confianza:.1f}%")
+        
+        return jsonify({
+            'success': True,
+            'message': 'Asistencia registrada correctamente',
+            'usuario': nombre_usuario,
+            'equipo': nombre_equipo,
+            'confianza': round(confianza, 2),
+            'asistencia_id': asistencia_id
+        })
+        
+    except Exception as e:
+        print(f"❌ Error confirmando asistencia: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        if 'session' in locals():
+            session.rollback()
+            session.close()
+        return jsonify({'success': False, 'error': f'Error en servidor: {str(e)}'}), 500
 
 # =====================================================
 # SESIONES DE ASISTENCIA EN VIVO
@@ -2255,7 +2945,7 @@ def update_recognition_threshold():
     except Exception as e:
         print(f"❌ Error actualizando configuración: {e}")
         return jsonify({
-            'success': False,
+            'success': False, 
             'error': str(e)
         }), 500
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sesión de Asistencia - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/sesion_asistencia.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>📹 Sesión de Asistencia</h1>
+                <p id="equipoNombre">Cargando...</p>
+            </div>
+            <button class="btn btn-danger" onclick="volverDashboard()">
+                ← Volver
+            </button>
+        </div>
+
+        <div id="alert" class="alert"></div>
+
+        <div class="main-grid">
+            <!-- Sección de cámara -->
+            <div class="camera-section">
+                <div id="statusIndicator" class="status inactive">
+                    🔴 Cámara Inactiva
+                </div>
+
+                <video id="videoElement" autoplay playsinline></video>
+                <canvas id="canvas"></canvas>
+
+                <div class="controls">
+                    <button id="btnIniciar" class="btn btn-success" onclick="iniciarSesion()">
+                        ▶ Iniciar Sesión
+                    </button>
+                    <button id="btnDetener" class="btn btn-danger" onclick="detenerSesion()" style="display: none;">
+                        ⏹ Detener Sesión
+                    </button>
+                </div>
+            </div>
+
+            <!-- Lista de reconocidos -->
+            <div class="recognized-list">
+                <h2>✅ Reconocidos</h2>
+
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="value" id="totalReconocidos">0</div>
+                        <div class="label">Presentes</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value" id="totalMiembros">0</div>
+                        <div class="label">Miembros</div>
+                    </div>
+                </div>
+
+                <div class="timer" id="timer">00:00</div>
+
+                <!-- Sección QR Individual para Virtuales -->
+                <div id="qrSection" style="display: none; background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); padding: 20px; border-radius: 12px; margin: 20px 0; border: 2px solid #0ea5e9;">
+                    <div style="text-align: center; margin-bottom: 16px;">
+                        <h3 style="color: #0c4a6e; margin: 0 0 8px 0;">📱 QR Individual Virtual</h3>
+                        <p style="color: #075985; font-size: 13px; margin: 0;">Selecciona un estudiante y genera su QR personal</p>
+                    </div>
+                    
+                    <!-- Buscador de miembro -->
+                    <div style="margin-bottom: 16px;">
+                        <input type="text" id="searchMiembro" placeholder="🔍 Buscar estudiante..." 
+                               style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #0ea5e9; margin-bottom: 8px;"
+                               oninput="filtrarMiembros()">
+                        <select id="selectMiembro" class="form-select" style="width: 100%; padding: 10px; border-radius: 8px; border: 2px solid #0ea5e9;">
+                            <option value="">Seleccionar estudiante...</option>
+                        </select>
+                    </div>
+                    
+                    <!-- Contenedor del QR -->
+                    <div id="qrContainer" style="background: white; padding: 20px; border-radius: 8px; display: none; justify-content: center; flex-direction: column; align-items: center; margin-bottom: 12px;">
+                        <div id="qrCode" style="margin-bottom: 12px;"></div>
+                        <p id="qrNombre" style="font-weight: bold; color: #0c4a6e; margin: 0;"></p>
+                        <p style="font-size: 12px; color: #075985; margin: 4px 0 0 0;">⏱️ Válido por <span id="qrTimer">5:00</span></p>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button class="btn btn-primary" onclick="generarQRIndividual()" style="width: 100%; background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);">
+                            🔐 Generar QR Personal
+                        </button>
+                    </div>
+                </div>
+
+                <button id="btnMostrarQR" class="btn" onclick="toggleQRSection()" style="width: 100%; margin-bottom: 16px; background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white; display: none;">
+                    📱 QR Individual Virtual
+                </button>
+
+                <div id="reconocidosContainer">
+                    <!-- Los reconocidos aparecerán aquí -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="/static/js/sesion_asistencia.js"></script>
+</body>
+</html>

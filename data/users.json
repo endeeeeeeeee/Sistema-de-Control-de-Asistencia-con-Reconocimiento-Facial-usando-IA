@@ -1,0 +1,12 @@
+{
+  "Ing. Molina": {
+    "password": "fc1f09ab08ebdd072ea6da53a5691abcc18c9163b1be1f0921a5adb50e3f5077",
+    "full_name": "Hugo Javier Molina Barrero",
+    "created_at": "2025-11-17T17:44:05.200227",
+    "subjects": [
+      "PROGRAMACIÓN IV",
+      "SISTEMAS OPERATIVOS II"
+    ],
+    "is_active": true
+  }
+}

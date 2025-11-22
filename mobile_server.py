@@ -8,6 +8,7 @@ from flask import Flask, render_template, request, jsonify, send_file, redirect,
 from flask_cors import CORS
 import qrcode
 import io
+import os
 import socket
 import threading
 import cv2
@@ -22,9 +23,13 @@ import json
 import automatic_attendance_headless as attendance_module
 import show_attendance
 from auth_manager_flexible import AuthManager
+from db_student_manager import DBStudentManager
 
 # Importar blueprints nuevos
 from api_routes_flexible import api_bp
+
+# Inicializar StudentManager
+student_manager = DBStudentManager()
 
 app = Flask(__name__)
 CORS(app)
@@ -149,14 +154,10 @@ def test_login_page():
     return render_template('test_login.html')
 
 @app.route('/registro-estudiante')
-def registro_estudiante_page():
-    """Portal público de auto-registro para estudiantes"""
-    return render_template('registro_estudiante.html')
-
 @app.route('/registro')
-def registro_page():
-    """Página de registro de usuarios"""
-    return render_template('registro.html')
+def registro_estudiante_page():
+    """Portal público de auto-registro para estudiantes con captura facial"""
+    return render_template('registro_estudiante.html')
 
 @app.route('/dashboard')
 def dashboard():
@@ -368,90 +369,18 @@ def server_info():
 # ENDPOINTS DE AUTENTICACIÓN
 # ============================================
 
-@app.route('/api/auth/register', methods=['POST'])
-def register():
-    """Registrar nuevo docente"""
-    try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        full_name = data.get('full_name')
-        
-        if not all([username, password, full_name]):
-            return jsonify({'success': False, 'error': 'Todos los campos son requeridos'}), 400
-        
-        user, token = auth_manager.register(username, password, full_name)
-        
-        if user:
-            return jsonify({
-                'success': True,
-                'user': user,
-                'token': token,
-                'message': 'Registro exitoso'
-            })
-        else:
-            return jsonify({'success': False, 'error': 'Usuario ya existe'}), 400
-            
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/auth/login', methods=['POST'])
-def login():
-    """Login de docente"""
-    try:
-        data = request.json
-        username = data.get('username')
-        password = data.get('password')
-        
-        print(f"\n=== LOGIN ATTEMPT ===")
-        print(f"Username recibido: '{username}'")
-        print(f"Password recibido: '{password}' (length: {len(password) if password else 0})")
-        
-        if not all([username, password]):
-            return jsonify({'success': False, 'error': 'Usuario y contraseña requeridos'}), 400
-        
-        user, token = auth_manager.login(username, password)
-        
-        print(f"Resultado login: {'SUCCESS' if user else 'FAILED'}")
-        
-        if user:
-            return jsonify({
-                'success': True,
-                'user': user,
-                'token': token,
-                'message': 'Login exitoso'
-            })
-        else:
-            return jsonify({'success': False, 'error': 'Credenciales inválidas'}), 401
-            
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/auth/logout', methods=['POST'])
-def logout():
-    """Cerrar sesión"""
-    try:
-        token = request.headers.get('Authorization', '').replace('Bearer ', '')
-        if token:
-            auth_manager.logout(token)
-        return jsonify({'success': True, 'message': 'Sesión cerrada'})
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-
-@app.route('/api/auth/validate', methods=['POST'])
-def validate_token():
-    """Validar token de sesión"""
-    try:
-        token = request.headers.get('Authorization', '').replace('Bearer ', '')
-        user = auth_manager.validate_token(token)
-        
-        if user:
-            return jsonify({'success': True, 'user': user})
-        else:
-            return jsonify({'success': False, 'error': 'Token inválido'}), 401
-            
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
+# ============================================
+# ENDPOINTS DE AUTENTICACIÓN DESHABILITADOS
+# ============================================
+# NOTA: Todos los endpoints de autenticación (/api/auth/*) son manejados
+# por el blueprint api_routes_flexible.py que se registra en la línea 57.
+# Los siguientes endpoints están comentados para evitar duplicación y confusión.
+#
+# - POST /api/auth/register  -> api_routes_flexible.py línea 92
+# - POST /api/auth/login     -> api_routes_flexible.py línea 116
+# - POST /api/auth/logout    -> api_routes_flexible.py línea 165
+#
+# Si necesitas modificar la autenticación, edita api_routes_flexible.py
 
 # ============================================
 # ENDPOINTS DE GESTIÓN DE MATERIAS

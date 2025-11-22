@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Códigos QR - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/codigos_qr.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/dashboard" class="btn btn-back">← Volver al Dashboard</a>
+            <h1 style="margin-top: 20px;">Códigos QR Temporales</h1>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="grid">
+            <!-- QR para Clase Virtual -->
+            <div class="card">
+                <h2>📹 Clase Virtual</h2>
+                <p>Genera un QR temporal para asistencia en clases virtuales</p>
+                
+                <form id="formVirtual">
+                    <div class="form-group">
+                        <label for="materiaVirtual">Materia *</label>
+                        <select id="materiaVirtual" class="form-control" required>
+                            <option value="">Cargando...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duracionVirtual">Duración (minutos) *</label>
+                        <input type="number" id="duracionVirtual" class="form-control" value="60" min="15" max="240" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Generar QR Virtual
+                    </button>
+                </form>
+            </div>
+
+            <!-- QR Código Numérico -->
+            <div class="card">
+                <h2>🔢 Código Numérico</h2>
+                <p>Genera un código de 6 dígitos para asistencia rápida</p>
+                
+                <form id="formNumerico">
+                    <div class="form-group">
+                        <label for="materiaNumerico">Materia *</label>
+                        <select id="materiaNumerico" class="form-control" required>
+                            <option value="">Cargando...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duracionNumerico">Duración (minutos) *</label>
+                        <input type="number" id="duracionNumerico" class="form-control" value="30" min="5" max="120" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Generar Código
+                    </button>
+                </form>
+            </div>
+
+            <!-- Enlace Único -->
+            <div class="card">
+                <h2>🔗 Enlace Único</h2>
+                <p>Genera un enlace temporal de un solo uso</p>
+                
+                <form id="formEnlace">
+                    <div class="form-group">
+                        <label for="materiaEnlace">Materia *</label>
+                        <select id="materiaEnlace" class="form-control" required>
+                            <option value="">Cargando...</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="duracionEnlace">Validez (minutos) *</label>
+                        <input type="number" id="duracionEnlace" class="form-control" value="15" min="5" max="60" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%;">
+                        Generar Enlace
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Preview del QR generado -->
+        <div class="qr-list" id="qrPreviewContainer" style="display: none;">
+            <h2>✅ Código Generado</h2>
+            <div class="qr-preview">
+                <div class="qr-image" id="qrImageContainer">
+                    <canvas id="qrCanvas"></canvas>
+                </div>
+                <div class="qr-info">
+                    <div class="qr-info-item">
+                        <strong>Tipo:</strong>
+                        <span id="qrTipo"></span>
+                    </div>
+                    <div class="qr-info-item">
+                        <strong>Código:</strong>
+                        <span id="qrCodigo" style="font-family: monospace; font-size: 18px; font-weight: bold;"></span>
+                    </div>
+                    <div class="qr-info-item">
+                        <strong>Válido hasta:</strong>
+                        <span id="qrExpiracion"></span>
+                    </div>
+                    <div class="qr-info-item">
+                        <strong>Materia:</strong>
+                        <span id="qrMateria"></span>
+                    </div>
+                </div>
+                <div class="qr-actions">
+                    <button class="btn btn-primary" id="btnDescargarQR">
+                        💾 Descargar
+                    </button>
+                    <button class="btn btn-secondary" id="btnCompartir">
+                        📤 Compartir
+                    </button>
+                    <button class="ődary" id="btnNuevo">
+                        ➕ Generar Otro
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de códigos activos -->
+        <div class="qr-list">
+            <h2>📋 Códigos Activos</h2>
+            <div id="activeCodesContainer">
+                <p style="text-align: center; color: #6B7280; padding: 40px;">
+                    No hay códigos activos
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="/static/js/codigos_qr.js"></script>
+</body>
+</html>

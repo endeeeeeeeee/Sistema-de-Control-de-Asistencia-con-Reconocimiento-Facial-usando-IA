@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Estudiantes - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/registro_estudiante.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎓 Registro de Estudiantes</h1>
+            <p>Completa tu registro en 3 simples pasos</p>
+        </div>
+
+        <div class="card">
+            <div id="alert" class="alert"></div>
+
+            <!-- Indicador de pasos -->
+            <div class="steps">
+                <div class="step active" id="stepIndicator1">
+                    <div class="step-circle">1</div>
+                    <div class="step-label">Datos Personales</div>
+                </div>
+                <div class="step" id="stepIndicator2">
+                    <div class="step-circle">2</div>
+                    <div class="step-label">Foto Facial</div>
+                </div>
+                <div class="step" id="stepIndicator3">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Confirmación</div>
+                </div>
+            </div>
+
+            <!-- Paso 1: Datos Personales -->
+            <div class="form-section active" id="step1">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">📝 Información Personal</h3>
+                
+                <div class="form-group">
+                    <label for="nombreCompleto">Nombre Completo *</label>
+                    <input type="text" id="nombreCompleto" class="form-control" required placeholder="Juan Pérez García">
+                </div>
+
+                <div class="form-group">
+                    <label for="cedula">Cédula de Identidad *</label>
+                    <input type="text" id="cedula" class="form-control" required placeholder="12345678">
+                </div>
+
+                <div class="form-group">
+                    <label for="telefono">Teléfono *</label>
+                    <input type="tel" id="telefono" class="form-control" required placeholder="71234567">
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Correo Electrónico</label>
+                    <input type="email" id="email" class="form-control" placeholder="correo@ejemplo.com">
+                    <div class="help-text">Recibirás notificaciones en este correo</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="fechaNacimiento">Fecha de Nacimiento *</label>
+                    <input type="date" id="fechaNacimiento" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="genero">Género *</label>
+                    <select id="genero" class="form-control" required>
+                        <option value="">Seleccionar</option>
+                        <option value="M">Masculino</option>
+                        <option value="F">Femenino</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Contraseña *</label>
+                    <input type="password" id="password" class="form-control" required placeholder="Mínimo 6 caracteres" minlength="6">
+                </div>
+
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmar Contraseña *</label>
+                    <input type="password" id="confirmPassword" class="form-control" required placeholder="Repite tu contraseña" minlength="6">
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" onclick="nextStep(1)">
+                        Siguiente: Foto Facial →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 2: Foto Facial -->
+            <div class="form-section" id="step2">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">📸 Captura Automática de Fotos</h3>
+                <p style="margin-bottom: 20px; color: #666;">
+                    El sistema capturará <strong>50 fotos automáticamente</strong> para entrenar el reconocimiento facial con alta precisión
+                </p>
+
+                <div class="alert alert-info" id="captureInstructions" style="display: block; background: #DBEAFE; color: #1E40AF; border-left: 4px solid #3B82F6;">
+                    <strong>Instrucciones:</strong>
+                    <ul style="margin: 10px 0; padding-left: 20px;">
+                        <li>Mantén tu rostro dentro del cuadro</li>
+                        <li>Mueve ligeramente la cabeza (izquierda, derecha, arriba, abajo)</li>
+                        <li>El proceso tomará aproximadamente 10 segundos</li>
+                        <li>Mantén buena iluminación</li>
+                    </ul>
+                </div>
+
+                <div id="captureProgress" style="text-align: center; margin-bottom: 20px; display: none;">
+                    <div style="font-size: 24px; font-weight: bold; color: var(--primary);">
+                        Capturando: <span id="photoCount">0</span> / 50 fotos
+                    </div>
+                    <div style="width: 100%; max-width: 400px; margin: 15px auto; background: #E5E7EB; height: 20px; border-radius: 10px; overflow: hidden;">
+                        <div id="progressBar" style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--secondary), var(--accent)); transition: width 0.2s;"></div>
+                    </div>
+                </div>
+
+                <div class="camera-container">
+                    <img id="photoPreview" class="photo-preview" alt="Vista previa">
+                    <video id="video" autoplay></video>
+                    <canvas id="canvas"></canvas>
+                    
+                    <div class="btn-group" style="max-width: 400px; margin: 20px auto;">
+                        <button type="button" class="btn btn-primary" id="btnStartCamera" onclick="startCapture()">
+                            📷 Iniciar Captura Automática
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="btnRetake" onclick="retakeAllPhotos()" style="display: none;">
+                            🔄 Reiniciar Capturas
+                        </button>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(2)">
+                        ← Atrás
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnNextStep2" onclick="nextStep(2)" disabled>
+                        Siguiente: Confirmar →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 3: Confirmación -->
+            <div class="form-section" id="step3">
+                <h3 style="margin-bottom: 20px; color: var(--primary);">✅ Confirmar Registro</h3>
+                
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <strong>Nombre Completo</strong>
+                        <span id="summaryName"></span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Cédula</strong>
+                        <span id="summaryCedula"></span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Email</strong>
+                        <span id="summaryEmail"></span>
+                    </div>
+                    <div class="summary-item">
+                        <strong>Teléfono</strong>
+                        <span id="summaryPhone"></span>
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin: 30px 0;">
+                    <img id="summaryPhoto" class="photo-preview" style="display: inline-block;" alt="Foto">
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn btn-secondary" onclick="prevStep(3)">
+                        ← Atrás
+                    </button>
+                    <button type="button" class="btn btn-primary" id="btnRegister" onclick="registerStudent()">
+                        ✅ Confirmar Registro
+                    </button>
+                </div>
+            </div>
+
+            <!-- Paso 4: Éxito (oculto inicialmente) -->
+            <div class="form-section" id="step4">
+                <div class="success-icon">🎉</div>
+                <h2 style="text-align: center; color: var(--success); margin-bottom: 20px;">
+                    ¡Registro Exitoso!
+                </h2>
+                <p style="text-align: center; color: #666; font-size: 16px; margin-bottom: 30px;">
+                    Tu cuenta ha sido creada correctamente. Los docentes ahora podrán agregarte a sus materias usando tu código de estudiante.
+                </p>
+                <div style="text-align: center;">
+                    <button type="button" class="btn btn-primary" onclick="window.location.href='/login'">
+                        Ir a Inicio de Sesión
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/registro_estudiante.js"></script>
+</body>
+</html>

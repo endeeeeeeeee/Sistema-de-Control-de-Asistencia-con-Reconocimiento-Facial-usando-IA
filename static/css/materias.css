@@ -1,0 +1,350 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #023859;
+            --secondary: #54ACBF;
+            --accent: #A7EBF2;
+            --dark: #011C40;
+            --light: #F8FAFB;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --error: #EF4444;
+            --text: #1F2937;
+            --border: #E5E7EB;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            color: var(--primary);
+            font-size: 32px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(84, 172, 191, 0.3);
+        }
+
+        .btn-back {
+            background: var(--light);
+            color: var(--text);
+            border: 2px solid var(--border);
+        }
+
+        .btn-back:hover {
+            background: var(--border);
+        }
+
+        .materias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .materia-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .materia-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .materia-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--secondary), var(--primary));
+        }
+
+        .materia-header {
+            margin-bottom: 20px;
+        }
+
+        .materia-code {
+            color: var(--secondary);
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .materia-name {
+            color: var(--primary);
+            font-size: 22px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .materia-level {
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        .materia-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 12px;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 5px;
+        }
+
+        .materia-schedule {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .schedule-day {
+            padding: 6px 12px;
+            background: rgba(84, 172, 191, 0.1);
+            color: var(--secondary);
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .materia-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+
+        .btn-action {
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-attendance {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-attendance:hover {
+            background: var(--primary);
+        }
+
+        .btn-students {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        .btn-students:hover {
+            background: var(--border);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .empty-state h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .empty-state p {
+            color: #6B7280;
+            margin-bottom: 30px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px;
+            background: white;
+            border-radius: 16px;
+        }
+
+        .spinner {
+            border: 3px solid var(--border);
+            border-top: 3px solid var(--secondary);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 30px;
+        }
+
+        .modal-header h2 {
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(84, 172, 191, 0.1);
+        }
+
+        select.form-control {
+            cursor: pointer;
+        }
+
+        .days-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .day-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        .btn-cancel {
+            background: var(--light);
+            color: var(--text);
+        }
+
+        .btn-cancel:hover {
+            background: var(--border);
+        }

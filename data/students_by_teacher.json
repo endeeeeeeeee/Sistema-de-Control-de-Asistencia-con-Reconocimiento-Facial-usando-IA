@@ -1,0 +1,22 @@
+{
+  "Ing. Molina::PROGRAMACIÓN IV": {
+    "teacher": "Ing. Molina",
+    "subject": "PROGRAMACIÓN IV",
+    "students": [
+      {
+        "enrollment": "123456",
+        "name": "Alberto Figue"
+      }
+    ]
+  },
+  "Ing. Molina::SISTEMAS OPERATIVOS II": {
+    "teacher": "Ing. Molina",
+    "subject": "SISTEMAS OPERATIVOS II",
+    "students": [
+      {
+        "enrollment": "766851",
+        "name": "Ender Rosales Condoli"
+      }
+    ]
+  }
+}

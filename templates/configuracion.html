@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuración - CLASS VISION</title>
+    <link rel="stylesheet" href="/static/css/configuracion.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/dashboard" class="btn btn-back">← Volver al Dashboard</a>
+            <h1 style="margin-top: 20px;">Configuración del Sistema</h1>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <!-- Configuración General -->
+        <div class="config-section">
+            <h2>⚙️ Configuración General</h2>
+            <form id="formGeneral">
+                <div class="form-group">
+                    <label for="nombreInstitucion">Nombre de la Institución *</label>
+                    <input type="text" id="nombreInstitucion" class="form-control" required>
+                </div>
+
+                <!-- Modo Universidad fijo - no modificable -->
+                <input type="hidden" id="modoOperacion" value="UNIVERSIDAD">
+
+                <button type="submit" class="btn btn-primary">💾 Guardar Configuración General</button>
+            </form>
+        </div>
+
+        <!-- Reglas de Asistencia -->
+        <div class="config-section">
+            <h2>📋 Reglas de Asistencia</h2>
+            <form id="formReglas">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="toleranciaMinutos">Tolerancia de Tardanza (minutos)</label>
+                        <input type="number" id="toleranciaMinutos" class="form-control" min="0" max="60" value="15">
+                        <div class="help-text">Minutos después del inicio para marcar tardanza</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="minimoAsistencia">% Mínimo de Asistencia</label>
+                        <input type="number" id="minimoAsistencia" class="form-control" min="0" max="100" value="75">
+                        <div class="help-text">Porcentaje mínimo requerido para aprobar</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="umbralDesercion">Umbral para Alerta de Deserción</label>
+                        <input type="number" id="umbralDesercion" class="form-control" min="0" max="10" value="3">
+                        <div class="help-text">Faltas consecutivas para generar alerta</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 15px;">
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="qrUsoUnico" checked>
+                                <span class="slider"></span>
+                            </label>
+                            Códigos QR de un solo uso
+                        </label>
+                        <div class="help-text">Los códigos QR se invalidan después del primer uso</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 15px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="permitirJustificacionEstudiante">
+                            <span class="slider"></span>
+                        </label>
+                        Permitir que estudiantes envíen justificaciones
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 15px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="notificacionTutores">
+                            <span class="slider"></span>
+                        </label>
+                        Enviar notificaciones automáticas a tutores
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 15px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="gamificacionActiva">
+                            <span class="slider"></span>
+                        </label>
+                        Activar sistema de gamificación y badges
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">💾 Guardar Reglas</button>
+            </form>
+        </div>
+
+        <!-- Reconocimiento Facial -->
+        <div class="config-section">
+            <h2>👤 Reconocimiento Facial</h2>
+            <form id="formFacial">
+                <div class="grid-2">
+                    <div class="form-group">
+                        <label for="umbralConfianza">Umbral de Confianza (%)</label>
+                        <input type="number" id="umbralConfianza" class="form-control" min="50" max="100" value="85">
+                        <div class="help-text">Confianza mínima para reconocimiento</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="umbralLiveness">Umbral Liveness (%)</label>
+                        <input type="number" id="umbralLiveness" class="form-control" min="50" max="100" value="70">
+                        <div class="help-text">Detección de rostro real vs foto</div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 15px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="detectarLiveness">
+                            <span class="slider"></span>
+                        </label>
+                        Activar detección de liveness (anti-spoofing)
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 15px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="guardarFotosAsistencia">
+                            <span class="slider"></span>
+                        </label>
+                        Guardar fotos de cada asistencia
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">💾 Guardar Configuración Facial</button>
+            </form>
+        </div>
+
+        <!-- Tema -->
+        <div class="config-section">
+            <h2>🎨 Tema</h2>
+            <div class="form-group">
+                <label style="display: flex; align-items: center; gap: 15px;">
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="modoOscuro">
+                        <span class="slider"></span>
+                    </label>
+                    Modo Oscuro
+                </label>
+                <div class="help-text">Activa el modo oscuro para reducir el cansancio visual</div>
+            </div>
+        </div>
+
+        <!-- Información del Sistema -->
+        <div class="config-section">
+            <h2>ℹ️ Información del Sistema</h2>
+            <div style="padding: 20px; background: var(--light); border-radius: 10px;">
+                <p><strong>Versión:</strong> CLASS VISION v2.0</p>
+                <p><strong>Base de Datos:</strong> PostgreSQL 14+</p>
+                <p><strong>Módulos Activos:</strong> Reconocimiento Facial, QR, Gamificación, IA Predicción</p>
+                <p><strong>Última Actualización:</strong> <span id="lastUpdate">--</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/configuracion.js"></script>
+</body>
+</html>
