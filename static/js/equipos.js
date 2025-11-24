@@ -243,6 +243,12 @@ async function handleCreateTeam(event) {
     const descripcion = document.getElementById('teamDescription').value.trim();
     const alertDiv = document.getElementById('createTeamAlert');
     
+    // Validar que el nombre no esté vacío
+    if (!nombre) {
+        alertDiv.innerHTML = '<div class="alert alert-error">El nombre del equipo es obligatorio</div>';
+        return;
+    }
+    
     try {
         const response = await fetch('/api/equipos', {
             method: 'POST',

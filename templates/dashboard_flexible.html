@@ -814,9 +814,16 @@
             event.preventDefault();
             
             const alert = document.getElementById('createAlert');
-            const name = document.getElementById('teamName').value;
+            const name = document.getElementById('teamName').value.trim();
             const type = document.getElementById('teamType').value;
-            const description = document.getElementById('teamDescription').value;
+            const description = document.getElementById('teamDescription').value.trim();
+            
+            // Validar que el nombre no esté vacío
+            if (!name) {
+                alert.textContent = 'El nombre del equipo es obligatorio';
+                alert.className = 'alert error active';
+                return;
+            }
             
             try {
                 const response = await fetch(`${API_BASE}/equipos`, {
@@ -825,7 +832,11 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${authToken}`
                     },
-                    body: JSON.stringify({ nombre: name, tipo: type, descripcion: description })
+                    body: JSON.stringify({ 
+                        nombre_equipo: name, 
+                        tipo_equipo: type, 
+                        descripcion: description 
+                    })
                 });
                 
                 const data = await response.json();

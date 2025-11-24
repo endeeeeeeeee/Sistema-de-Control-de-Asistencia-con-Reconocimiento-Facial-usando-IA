@@ -34,10 +34,27 @@ student_manager = DBStudentManager()
 app = Flask(__name__)
 CORS(app)
 
+# Configurar límite de tamaño de payload (para múltiples fotos en base64)
+# Por defecto Flask tiene 16MB, aumentamos a 50MB para permitir múltiples fotos
+app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50 MB
+
 # Agregar logging para diagnosticar
 import logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
+
+# Manejar error 413 (Payload Too Large) con JSON en lugar de HTML
+from werkzeug.exceptions import RequestEntityTooLarge
+
+@app.errorhandler(RequestEntityTooLarge)
+def handle_request_entity_too_large(e):
+    """Manejar error 413 con respuesta JSON"""
+    logger.warning(f'Error 413: Payload demasiado grande en {request.path}')
+    return jsonify({
+        'success': False,
+        'error': 'El tamaño de los datos enviados es demasiado grande. Por favor, reduce el número de fotos o su calidad.',
+        'max_size_mb': app.config.get('MAX_CONTENT_LENGTH', 16 * 1024 * 1024) / (1024 * 1024)
+    }), 413
 
 # Middleware para ver todas las peticiones
 @app.before_request

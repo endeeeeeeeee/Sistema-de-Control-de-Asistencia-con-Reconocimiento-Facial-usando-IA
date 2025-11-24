@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Biométrico Modular - Prototipo UI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Animación para el asistente de voz */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1.1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .mic-active {
+            animation: pulse-ring 2s infinite;
+        }
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-white font-sans antialiased h-screen overflow-hidden flex flex-col">
+
+    <!-- ================= NAV SUPERIOR ================= -->
+    <nav class="h-14 bg-slate-800 border-b border-slate-700 flex items-center justify-between px-6 z-20">
+        <div class="flex items-center gap-3">
+            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center shadow-lg shadow-blue-500/50">
+                <i class="fas fa-fingerprint text-white"></i>
+            </div>
+            <span class="font-bold text-lg tracking-wide">BIO<span class="text-blue-400">SYS</span></span>
+        </div>
+        <div class="text-sm text-slate-400 flex gap-4">
+            <span id="connection-status" class="flex items-center gap-2">
+                <span class="w-2 h-2 bg-green-500 rounded-full"></span> Online
+            </span>
+            <span id="current-time">10:42 AM</span>
+        </div>
+    </nav>
+
+    <!-- ================= CONTENEDOR PRINCIPAL ================= -->
+    <div class="flex flex-1 overflow-hidden relative">
+
+        <!-- ================= PANTALLA 1: LOGIN (Inicio) ================= -->
+        <div id="screen-login" class="absolute inset-0 z-50 bg-slate-900 flex items-center justify-center">
+            <div class="w-full max-w-md p-8 glass-panel rounded-2xl shadow-2xl border border-slate-700">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-blue-600 rounded-2xl mx-auto flex items-center justify-center mb-4 shadow-xl shadow-blue-500/20">
+                        <i class="fas fa-shield-alt text-3xl"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-1">Bienvenido</h2>
+                    <p class="text-slate-400 text-sm">Seleccione su perfil para ingresar</p>
+                </div>
+
+                <div class="space-y-3">
+                    <button onclick="switchScreen('docente')" class="w-full p-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl flex items-center gap-4 transition-all group">
+                        <div class="w-10 h-10 rounded-full bg-blue-500/10 text-blue-400 flex items-center justify-center group-hover:bg-blue-500 group-hover:text-white transition-colors">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold">Soy Docente</div>
+                            <div class="text-xs text-slate-400">Universidad / Colegio</div>
+                        </div>
+                        <i class="fas fa-chevron-right ml-auto text-slate-500"></i>
+                    </button>
+
+                    <button onclick="switchScreen('tutor')" class="w-full p-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl flex items-center gap-4 transition-all group">
+                        <div class="w-10 h-10 rounded-full bg-green-500/10 text-green-400 flex items-center justify-center group-hover:bg-green-500 group-hover:text-white transition-colors">
+                            <i class="fas fa-baby-carriage"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold">Soy Tutor / Guardería</div>
+                            <div class="text-xs text-slate-400">Recojo de menores</div>
+                        </div>
+                        <i class="fas fa-chevron-right ml-auto text-slate-500"></i>
+                    </button>
+
+                    <button onclick="switchScreen('estudiante')" class="w-full p-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 rounded-xl flex items-center gap-4 transition-all group">
+                        <div class="w-10 h-10 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                        <div class="text-left">
+                            <div class="font-semibold">Soy Estudiante</div>
+                            <div class="text-xs text-slate-400">Ver mis puntos</div>
+                        </div>
+                        <i class="fas fa-chevron-right ml-auto text-slate-500"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANTALLA 2: DOCENTE (Dashboard) ================= -->
+        <div id="screen-docente" class="hidden w-full h-full flex">
+            <!-- Sidebar -->
+            <aside class="w-64 bg-slate-800 border-r border-slate-700 flex flex-col">
+                <div class="p-6 border-b border-slate-700">
+                    <div class="flex items-center gap-3 mb-1">
+                        <img src="https://ui-avatars.com/api/?name=Profesor+X&background=random" class="w-10 h-10 rounded-full">
+                        <div>
+                            <h3 class="font-bold text-sm">Ing. R. Méndez</h3>
+                            <span class="text-xs text-green-400">● En clase</span>
+                        </div>
+                    </div>
+                </div>
+                <nav class="flex-1 p-4 space-y-2">
+                    <a href="#" class="flex items-center gap-3 p-3 bg-blue-600/10 text-blue-400 rounded-lg border border-blue-600/20">
+                        <i class="fas fa-video"></i> Asistencia en Vivo
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-700/50 rounded-lg">
+                        <i class="fas fa-file-alt"></i> Reportes Excel
+                    </a>
+                    <a href="#" class="flex items-center gap-3 p-3 text-slate-400 hover:bg-slate-700/50 rounded-lg">
+                        <i class="fas fa-cogs"></i> Configuración
+                    </a>
+                </nav>
+                <div class="p-4">
+                    <button onclick="switchScreen('login')" class="w-full p-2 text-sm text-red-400 border border-red-900/30 bg-red-900/10 rounded hover:bg-red-900/20">
+                        <i class="fas fa-sign-out-alt mr-2"></i> Salir
+                    </button>
+                </div>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="flex-1 p-6 bg-slate-900 overflow-y-auto">
+                <header class="flex justify-between items-center mb-6">
+                    <div>
+                        <h1 class="text-2xl font-bold text-white">Cálculo I - Grupo A</h1>
+                        <p class="text-slate-400 text-sm">Aula 204 • 08:00 - 10:00</p>
+                    </div>
+                    <div class="flex gap-3">
+                        <button class="px-4 py-2 bg-slate-800 border border-slate-600 rounded-lg text-sm hover:bg-slate-700">
+                            <i class="fas fa-qrcode mr-2"></i> Generar QR Móvil
+                        </button>
+                        <button class="px-4 py-2 bg-blue-600 rounded-lg text-sm font-bold hover:bg-blue-500 shadow-lg shadow-blue-600/30">
+                            <i class="fas fa-play mr-2"></i> Iniciar Clase
+                        </button>
+                    </div>
+                </header>
+
+                <!-- Grid de Contenido -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[500px]">
+                    
+                    <!-- Columna Cámara (2/3) -->
+                    <div class="lg:col-span-2 bg-black rounded-2xl relative overflow-hidden border border-slate-700 shadow-2xl">
+                        <!-- Simulación de Video -->
+                        <div class="absolute inset-0 flex items-center justify-center bg-slate-800">
+                            <i class="fas fa-camera text-slate-600 text-6xl animate-pulse"></i>
+                            <p class="absolute mt-24 text-slate-500">Cámara Activa - Buscando rostros...</p>
+                        </div>
+                        
+                        <!-- Overlay de Detección (Simulado) -->
+                        <div class="absolute top-10 left-10 p-2 border-2 border-green-500 rounded bg-green-500/20 backdrop-blur-sm">
+                            <div class="text-xs font-bold text-green-400">JUAN PÉREZ</div>
+                            <div class="text-[10px] text-white">+1 Pto (Puntual)</div>
+                        </div>
+                        
+                        <!-- Estadísticas Flotantes -->
+                        <div class="absolute bottom-4 left-4 right-4 flex gap-4">
+                            <div class="bg-black/60 backdrop-blur px-4 py-2 rounded-lg text-sm border border-white/10">
+                                <span class="text-slate-400">Presentes:</span> <span class="text-white font-bold">24</span>
+                            </div>
+                            <div class="bg-black/60 backdrop-blur px-4 py-2 rounded-lg text-sm border border-white/10">
+                                <span class="text-slate-400">Faltas:</span> <span class="text-red-400 font-bold">3</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Columna Lista (1/3) -->
+                    <div class="bg-slate-800 rounded-2xl border border-slate-700 flex flex-col">
+                        <div class="p-4 border-b border-slate-700 font-bold flex justify-between">
+                            <span>Ranking Asistencia</span>
+                            <i class="fas fa-trophy text-yellow-500"></i>
+                        </div>
+                        <div class="flex-1 overflow-y-auto p-2 space-y-2">
+                            <!-- Item Lista -->
+                            <div class="flex items-center gap-3 p-2 bg-slate-700/50 rounded-lg border-l-4 border-green-500">
+                                <img src="https://ui-avatars.com/api/?name=Juan+Perez&background=random" class="w-8 h-8 rounded-full">
+                                <div class="flex-1">
+                                    <div class="text-sm font-bold">Juan Pérez</div>
+                                    <div class="w-full bg-slate-600 h-1.5 rounded-full mt-1">
+                                        <div class="bg-green-500 h-1.5 rounded-full" style="width: 95%"></div>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-green-400">95 pts</span>
+                            </div>
+                            <!-- Item Lista -->
+                            <div class="flex items-center gap-3 p-2 bg-slate-700/50 rounded-lg border-l-4 border-yellow-500">
+                                <img src="https://ui-avatars.com/api/?name=Maria+Gomez&background=random" class="w-8 h-8 rounded-full">
+                                <div class="flex-1">
+                                    <div class="text-sm font-bold">María Gómez</div>
+                                    <div class="w-full bg-slate-600 h-1.5 rounded-full mt-1">
+                                        <div class="bg-yellow-500 h-1.5 rounded-full" style="width: 70%"></div>
+                                    </div>
+                                </div>
+                                <span class="text-xs font-bold text-yellow-400">70 pts</span>
+                            </div>
+                             <!-- Item Lista -->
+                             <div class="flex items-center gap-3 p-2 bg-slate-700/50 rounded-lg border-l-4 border-red-500 opacity-75">
+                                <img src="https://ui-avatars.com/api/?name=Carlos+D&background=random" class="w-8 h-8 rounded-full grayscale">
+                                <div class="flex-1">
+                                    <div class="text-sm font-bold text-slate-400">Carlos D.</div>
+                                    <div class="text-xs text-red-400">Ausente hoy</div>
+                                </div>
+                                <button class="text-xs bg-slate-600 px-2 py-1 rounded hover:bg-slate-500">Justificar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+
+        <!-- ================= PANTALLA 3: TUTOR / GUARDERÍA ================= -->
+        <div id="screen-tutor" class="hidden w-full h-full bg-slate-900 p-6 flex flex-col items-center justify-center relative">
+            <button onclick="switchScreen('login')" class="absolute top-6 left-6 text-slate-400 hover:text-white">
+                <i class="fas fa-arrow-left"></i> Volver
+            </button>
+
+            <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- Lado Izquierdo: Estado del Niño -->
+                <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 flex flex-col items-center text-center shadow-2xl relative overflow-hidden">
+                    <div class="absolute top-0 left-0 w-full h-2 bg-green-500"></div>
+                    <div class="relative w-32 h-32 mb-6">
+                        <div class="absolute inset-0 rounded-full border-4 border-green-500 animate-ping opacity-20"></div>
+                        <img src="https://ui-avatars.com/api/?name=Santi+B&background=random&size=128" class="rounded-full border-4 border-slate-700 shadow-xl relative z-10">
+                        <div class="absolute bottom-0 right-0 bg-green-500 text-white p-2 rounded-full z-20 shadow-lg">
+                            <i class="fas fa-check"></i>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-3xl font-bold text-white mb-1">Santiago López</h2>
+                    <p class="text-green-400 font-bold text-lg mb-6">En Sala Azul - Seguro</p>
+                    
+                    <div class="w-full bg-slate-700/50 rounded-xl p-4 text-left space-y-3">
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Entrada:</span>
+                            <span class="font-mono text-white">07:45 AM</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Dejado por:</span>
+                            <span class="font-bold text-blue-300">Mamá</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-slate-400">Última comida:</span>
+                            <span class="text-white">10:00 AM (Fruta)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lado Derecho: Acción de Recojo -->
+                <div class="bg-slate-800 rounded-3xl p-8 border border-slate-700 flex flex-col items-center justify-center text-center shadow-2xl">
+                    <h3 class="text-xl font-bold text-white mb-6">Pase de Recojo Digital</h3>
+                    
+                    <!-- QR Simulado -->
+                    <div class="bg-white p-4 rounded-xl shadow-lg mb-6">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=AuthToken12345" class="w-40 h-40 opacity-90">
+                    </div>
+
+                    <p class="text-slate-400 text-sm mb-6">Muestre este código o su rostro a la cámara de la entrada para autorizar la salida.</p>
+
+                    <button class="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl font-bold transition-colors shadow-lg shadow-blue-600/20">
+                        <i class="fas fa-share-alt mr-2"></i> Compartir con Tío/Abuelo
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= PANTALLA 4: ESTUDIANTE ================= -->
+        <div id="screen-estudiante" class="hidden w-full h-full bg-slate-900 p-4 md:p-8 flex flex-col">
+             <button onclick="switchScreen('login')" class="self-start text-slate-400 hover:text-white mb-6">
+                <i class="fas fa-arrow-left"></i> Salir
+            </button>
+
+            <header class="mb-8 flex justify-between items-end">
+                <div>
+                    <h1 class="text-3xl font-bold text-white">Hola, Camila 👋</h1>
+                    <p class="text-slate-400">Ingeniería de Sistemas • 4to Semestre</p>
+                </div>
+                <div class="text-right hidden md:block">
+                    <div class="text-4xl font-bold text-yellow-400">340 Pts</div>
+                    <div class="text-xs text-yellow-200/50 tracking-wider uppercase">Puntaje Global</div>
+                </div>
+            </header>
+
+            <!-- Stats Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="text-slate-400 text-xs uppercase mb-1">Asistencia Total</div>
+                    <div class="text-2xl font-bold text-white">92%</div>
+                    <div class="w-full bg-slate-700 h-1 mt-2 rounded"><div class="bg-green-500 h-1 rounded" style="width:92%"></div></div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="text-slate-400 text-xs uppercase mb-1">Faltas</div>
+                    <div class="text-2xl font-bold text-white">2</div>
+                    <div class="text-xs text-slate-500">Ninguna crítica</div>
+                </div>
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+                    <div class="text-slate-400 text-xs uppercase mb-1">Racha</div>
+                    <div class="text-2xl font-bold text-orange-400">15 Días</div>
+                    <div class="text-xs text-slate-500">Seguidos asistiendo</div>
+                </div>
+                 <div class="bg-gradient-to-br from-blue-600 to-blue-800 p-4 rounded-xl border border-blue-500 shadow-lg shadow-blue-600/20">
+                    <div class="text-blue-100 text-xs uppercase mb-1">Nivel Actual</div>
+                    <div class="text-2xl font-bold text-white">Platino</div>
+                    <div class="text-xs text-blue-200">Próx: Diamante</div>
+                </div>
+            </div>
+
+            <!-- Materias -->
+            <h3 class="text-xl font-bold text-white mb-4">Mis Materias</h3>
+            <div class="grid gap-4">
+                <!-- Card Materia -->
+                <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center hover:border-slate-600 transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-purple-900/30 text-purple-400 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Cálculo I</h4>
+                            <p class="text-xs text-slate-400">Aula 204 • Mañana 08:00</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                         <span class="px-3 py-1 bg-green-500/20 text-green-400 rounded-full text-xs font-bold">Puntual hoy</span>
+                    </div>
+                </div>
+                 <!-- Card Materia -->
+                 <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-between items-center hover:border-slate-600 transition-colors cursor-pointer">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-orange-900/30 text-orange-400 rounded-lg flex items-center justify-center text-xl">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold">Programación II</h4>
+                            <p class="text-xs text-slate-400">Lab 3 • Hoy 14:00</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button class="px-3 py-1 border border-slate-600 hover:bg-slate-700 rounded-lg text-xs">Justificar Falta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BOTÓN FLOTANTE "SIRI" ================= -->
+        <div class="absolute bottom-6 right-6 z-50">
+            <div id="voice-tooltip" class="hidden absolute bottom-20 right-0 bg-slate-800 text-white px-4 py-2 rounded-lg text-sm border border-slate-600 whitespace-nowrap shadow-xl mb-2">
+                Escuchando... "¿Justificar a Pérez?"
+            </div>
+            <button onclick="toggleVoice()" id="mic-btn" class="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-red-600/40 hover:bg-red-500 transition-all hover:scale-105">
+                <i class="fas fa-microphone text-2xl"></i>
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // Lógica simple para cambiar pantallas
+        function switchScreen(screenName) {
+            // Ocultar todas
+            document.getElementById('screen-login').classList.add('hidden');
+            document.getElementById('screen-docente').classList.add('hidden');
+            document.getElementById('screen-tutor').classList.add('hidden');
+            document.getElementById('screen-estudiante').classList.add('hidden');
+
+            // Mostrar la seleccionada
+            document.getElementById('screen-' + screenName).classList.remove('hidden');
+        }
+
+        // Simulación de Asistente de Voz
+        function toggleVoice() {
+            const btn = document.getElementById('mic-btn');
+            const tooltip = document.getElementById('voice-tooltip');
+            
+            if (btn.classList.contains('mic-active')) {
+                // Apagar
+                btn.classList.remove('mic-active');
+                tooltip.classList.add('hidden');
+            } else {
+                // Encender
+                btn.classList.add('mic-active');
+                tooltip.classList.remove('hidden');
+                
+                // Simular respuesta después de 3 segundos
+                setTimeout(() => {
+                    tooltip.innerText = "Comando procesado.";
+                    setTimeout(() => {
+                        toggleVoice(); // Apagar solo
+                        tooltip.innerText = 'Escuchando... "¿Justificar a Pérez?"'; // Reset texto
+                    }, 1000);
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

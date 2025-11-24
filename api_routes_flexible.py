@@ -349,6 +349,18 @@ def create_team():
         session = get_db_session()
         user_id = request.current_user['id']
         
+        # Obtener nombre_equipo (acepta tanto 'nombre_equipo' como 'nombre' para compatibilidad)
+        nombre_equipo = data.get('nombre_equipo') or data.get('nombre')
+        if not nombre_equipo or not nombre_equipo.strip():
+            return jsonify({
+                'success': False, 
+                'error': 'El nombre del equipo es obligatorio'
+            }), 400
+        
+        # Obtener tipo_equipo (acepta tanto 'tipo_equipo' como 'tipo' para compatibilidad)
+        tipo_equipo = data.get('tipo_equipo') or data.get('tipo', 'otro')
+        descripcion = data.get('descripcion', '').strip()
+        
         # Generar código de invitación
         codigo_query = text("SELECT generar_codigo_invitacion()")
         codigo_invitacion = session.execute(codigo_query).scalar()
@@ -365,9 +377,9 @@ def create_team():
         """)
         
         result = session.execute(insert_query, {
-            'nombre': data.get('nombre_equipo'),
-            'descripcion': data.get('descripcion', ''),
-            'tipo': data.get('tipo_equipo', 'otro'),
+            'nombre': nombre_equipo.strip(),
+            'descripcion': descripcion,
+            'tipo': tipo_equipo,
             'codigo': codigo_invitacion,
             'creador': user_id
         })
@@ -749,13 +761,15 @@ def check_active_session(equipo_id):
         session.execute(create_table_query)
         session.commit()
         
-        # Buscar sesión activa en las últimas 24 horas
+        # Buscar sesión activa (estado='activa') para el equipo
+        # Antes se consideraban también sesiones finalizadas en un rango temporal,
+        # lo que provocaba que el frontend creyera que había una sesión activa
+        # cuando en realidad su estado era 'finalizada'. Ahora filtramos por estado.
         query = text("""
             SELECT id, fecha_inicio
             FROM sesiones_asistencia
-            WHERE equipo_id = :equipo_id 
-            AND fecha_inicio >= NOW() - INTERVAL '24 hours'
-            AND (fecha_fin IS NULL OR fecha_fin >= NOW() - INTERVAL '2 hours')
+            WHERE equipo_id = :equipo_id
+            AND estado = 'activa'
             ORDER BY fecha_inicio DESC
             LIMIT 1
         """)
@@ -764,6 +778,7 @@ def check_active_session(equipo_id):
         session.close()
         
         if sesion:
+            print(f"✅ [CHECK_ACTIVE] Sesión encontrada: ID={sesion[0]}, Inicio={sesion[1]}")
             return jsonify({
                 'success': True,
                 'sesion_activa': True,
@@ -791,6 +806,8 @@ def start_session():
         user_id = request.current_user['id']
         equipo_id = data.get('equipo_id')
         duracion_minutos = data.get('duracion_minutos', 30)
+        
+        print(f"🎬 [CORRECTO] Iniciando sesión en /api/sesiones/iniciar para equipo {equipo_id}")
         
         # Verificar que el usuario sea líder del equipo
         verificar_query = text("""
@@ -1543,7 +1560,8 @@ def start_attendance_session():
         equipo_id = data.get('equipo_id')
         duracion_minutos = data.get('duracion_minutos', 30)
         
-        print(f"🎬 Iniciando sesión de asistencia para equipo {equipo_id}")
+        print(f"⚠️ [LEGACY/INCORRECTO] Iniciando sesión en /sesiones/iniciar (codigos_temporales) para equipo {equipo_id}")
+        print(f"⚠️ ADVERTENCIA: Este endpoint usa codigos_temporales, debería usar /api/sesiones/iniciar")
         
         # Verificar que el usuario es líder
         lider_check = text("""
@@ -1647,26 +1665,29 @@ def stop_attendance_session(sesion_id):
         
         # Verificar sesión y permisos
         sesion_check = text("""
-            SELECT ct.equipo_id, ct.generado_por
-            FROM codigos_temporales ct
-            WHERE ct.id = :sesion_id AND ct.tipo = 'SESION_ASISTENCIA'
+            SELECT sa.equipo_id, sa.usuario_creador_id
+            FROM sesiones_asistencia sa
+            WHERE sa.id = :sesion_id
         """)
         sesion_data = session.execute(sesion_check, {'sesion_id': sesion_id}).fetchone()
         
         if not sesion_data:
             session.close()
+            print(f"❌ Sesión {sesion_id} no encontrada")
             return jsonify({'success': False, 'error': 'Sesión no encontrada'}), 404
         
         # Marcar sesión como terminada
         update_sesion = text("""
-            UPDATE codigos_temporales
-            SET usado = true, usado_en = NOW()
+            UPDATE sesiones_asistencia
+            SET estado = 'finalizada', fecha_fin = NOW()
             WHERE id = :sesion_id
         """)
         session.execute(update_sesion, {'sesion_id': sesion_id})
         
         session.commit()
         session.close()
+        
+        print(f"✅ Sesión {sesion_id} detenida correctamente")
         
         return jsonify({
             'success': True,
@@ -1737,6 +1758,8 @@ def recognize_face_frame():
         imagen_base64 = data.get('imagen')
         sesion_id = data.get('sesion_id')
         
+        print(f"🔍 [RECONOCER-FRAME] Sesión recibida: {sesion_id} (tipo: {type(sesion_id)})")
+        
         if not imagen_base64 or not sesion_id:
             return jsonify({'success': False, 'error': 'Datos incompletos'}), 400
         
@@ -1755,19 +1778,30 @@ def recognize_face_frame():
         db_session = get_db_session()
         
         sesion_check = text("""
-            SELECT equipo_id FROM codigos_temporales
-            WHERE id = :sesion_id 
-            AND tipo = 'SESION_ASISTENCIA'
-            AND usado = false
-            AND NOW() < expira_en
+            SELECT id, equipo_id, estado, fecha_inicio FROM sesiones_asistencia
+            WHERE id = :sesion_id
         """)
         sesion_data = db_session.execute(sesion_check, {'sesion_id': sesion_id}).fetchone()
         
+        print(f"🔍 [DEBUG] Resultado query sesiones_asistencia: {sesion_data}")
+        
         if not sesion_data:
             db_session.close()
+            print(f"❌ Sesión {sesion_id} NO EXISTE en sesiones_asistencia")
             return jsonify({'success': False, 'error': 'Sesión inválida o expirada'}), 400
         
-        equipo_id = sesion_data[0]
+        if sesion_data[2] != 'activa':
+            db_session.close()
+            print(f"❌ Sesión {sesion_id} existe pero estado es '{sesion_data[2]}' (no 'activa')")
+            return jsonify({'success': False, 'error': 'Sesión inválida o expirada'}), 400
+        
+        if not sesion_data[3]:
+            db_session.close()
+            print(f"❌ Sesión {sesion_id} existe pero fecha_inicio es NULL")
+            return jsonify({'success': False, 'error': 'Sesión inválida o expirada'}), 400
+        
+        equipo_id = sesion_data[1]
+        print(f"✅ Sesión {sesion_id} válida para equipo {equipo_id} (estado={sesion_data[2]}, inicio={sesion_data[3]})")
         
         # Detectar rostros
         print("🔍 Iniciando detección facial...")

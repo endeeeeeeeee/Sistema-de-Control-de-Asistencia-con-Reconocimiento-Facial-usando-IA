@@ -255,7 +255,27 @@ let currentStep = 1;
 
                 console.log('Respuesta recibida:', response.status, response.statusText);
 
-                const data = await response.json();
+                // Verificar si la respuesta es JSON antes de parsear
+                const contentType = response.headers.get('content-type');
+                let data;
+                
+                if (contentType && contentType.includes('application/json')) {
+                    data = await response.json();
+                } else {
+                    // Si no es JSON, probablemente es HTML (error del servidor)
+                    const text = await response.text();
+                    console.error('Respuesta no JSON recibida:', text.substring(0, 200));
+                    
+                    if (response.status === 413) {
+                        showAlert('Error: El tamaño de los datos es demasiado grande. Por favor, reduce el número de fotos o su calidad.', 'error');
+                    } else {
+                        showAlert('Error del servidor: ' + response.status + ' ' + response.statusText, 'error');
+                    }
+                    btnRegister.disabled = false;
+                    btnRegister.textContent = '✅ Confirmar Registro';
+                    return;
+                }
+
                 console.log('Datos de respuesta:', data);
 
                 if (response.ok && data.success) {
@@ -264,13 +284,24 @@ let currentStep = 1;
                     document.getElementById('step3').classList.remove('active');
                     document.getElementById('step4').classList.add('active');
                 } else {
-                    showAlert(data.error || 'Error en el registro', 'error');
+                    // Manejar errores específicos
+                    if (response.status === 413) {
+                        showAlert(data.error || 'El tamaño de los datos es demasiado grande. Por favor, reduce el número de fotos.', 'error');
+                    } else {
+                        showAlert(data.error || 'Error en el registro', 'error');
+                    }
                     btnRegister.disabled = false;
                     btnRegister.textContent = '✅ Confirmar Registro';
                 }
             } catch (error) {
                 console.error('Error en registerStudent:', error);
-                showAlert('Error de conexión: ' + error.message, 'error');
+                
+                // Manejar errores de parsing JSON
+                if (error instanceof SyntaxError && error.message.includes('JSON')) {
+                    showAlert('Error: El servidor respondió con un formato incorrecto. Por favor, intenta con menos fotos.', 'error');
+                } else {
+                    showAlert('Error de conexión: ' + error.message, 'error');
+                }
                 btnRegister.disabled = false;
                 btnRegister.textContent = '✅ Confirmar Registro';
             }
